@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support – RentPlay</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --surface: #ede9df;
+      --card: #ffffff;
+      --border: #d8d3c7;
+      --accent: #e84040;
+      --accent2: #1a1a2e;
+      --text: #1a1a2e;
+      --muted: #7a7568;
+      --green: #2d6a4f;
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(26, 26, 46, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26, 26, 46, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(245, 242, 235, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid var(--text);
+    }
+
+    .logo {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 1.5rem;
+      cursor: pointer;
+      letter-spacing: -0.02em;
+      color: var(--text)
+    }
+
+    .logo span {
+      color: var(--accent)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      font-weight: 500
+    }
+
+    .nav-links a:hover {
+      color: var(--text)
+    }
+
+    .btn-nav {
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: 2px solid var(--text);
+      background: var(--text);
+      color: var(--bg);
+      transition: all .2s;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .btn-nav:hover {
+      background: var(--accent);
+      border-color: var(--accent)
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 80px 48px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      padding: 6px 14px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .hero-badge::before {
+      content: '●';
+      font-size: 0.6rem;
+      animation: blink 1.4s infinite
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.2
+      }
+    }
+
+    h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+      position: relative;
+      display: inline-block
+    }
+
+    h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 440px;
+      margin-bottom: 36px
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .stat-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green)
+    }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent2);
+      border-radius: var(--radius);
+      border: 2px solid var(--text);
+      padding: 40px;
+      min-height: 320px;
+      overflow: hidden;
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.03) 10px, rgba(255, 255, 255, 0.03) 20px);
+    }
+
+    .phone-mock {
+      position: relative;
+      z-index: 1;
+      width: 150px;
+      background: #0d0d1a;
+      border-radius: 28px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      padding: 18px 14px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .phone-notch {
+      width: 50px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin: 0 auto 14px
+    }
+
+    .phone-to-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: rgba(255, 255, 255, 0.35);
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase
+    }
+
+    .sms-bubble {
+      background: var(--accent);
+      border-radius: 14px 14px 14px 4px;
+      padding: 10px 12px;
+      font-size: 0.65rem;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .sms-bubble.out {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 14px 14px 4px 14px;
+      color: rgba(255, 255, 255, 0.75);
+      text-align: right
+    }
+
+    .sms-delivered {
+      font-size: 0.55rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px
+    }
+
+    .sms-time {
+      font-size: 0.55rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: center;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .ping-ring {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: pingRing 2s infinite
+    }
+
+    @keyframes pingRing {
+      0% {
+        transform: scale(1);
+        opacity: 1
+      }
+
+      100% {
+        transform: scale(2.5);
+        opacity: 0
+      }
+    }
+
+    .hero-label {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase
+    }
+
+    /* AUTO BADGE */
+    .auto-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    /* MAIN GRID */
+    .main-grid {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto 100px;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 40px;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--accent)
+    }
+
+    .info-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width .3s
+    }
+
+    .info-card:hover {
+      border-color: var(--text);
+      transform: translateX(6px)
+    }
+
+    .info-card:hover::before {
+      width: 100%
+    }
+
+    .info-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px
+    }
+
+    .info-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem
+    }
+
+    .info-title {
+      font-weight: 700;
+      font-size: 0.95rem
+    }
+
+    .info-text {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6
+    }
+
+    .phone-tag {
+      display: inline-block;
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.04em
+    }
+
+    .sms-highlight {
+      background: var(--accent2);
+      border-color: var(--accent2)
+    }
+
+    .sms-highlight .info-title {
+      color: #fff
+    }
+
+    .sms-highlight .info-text {
+      color: rgba(255, 255, 255, 0.6)
+    }
+
+    .sms-highlight .info-icon-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15)
+    }
+
+    .sms-highlight:hover {
+      border-color: var(--accent)
+    }
+
+    /* HOW IT WORKS card */
+    .how-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .how-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px
+    }
+
+    .how-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px
+    }
+
+    .how-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent2);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .how-text {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.5
+    }
+
+    .how-text strong {
+      color: var(--text)
+    }
+
+    /* FORM BOX */
+    .form-box {
+      background: var(--card);
+      border: 2px solid var(--text);
+      border-radius: var(--radius);
+      overflow: hidden
+    }
+
+    .form-header {
+      background: var(--accent2);
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-header-left .form-header-title {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 1.4rem;
+      color: #fff;
+      letter-spacing: -0.02em
+    }
+
+    .form-header-left .form-header-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 4px;
+      letter-spacing: 0.06em
+    }
+
+    .form-header-right {
+      text-align: right
+    }
+
+    .auto-send-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .auto-send-badge::before {
+      content: '⚡';
+      font-size: 0.7rem
+    }
+
+    .dest-to {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 6px
+    }
+
+    /* SETUP NOTICE */
+    .setup-notice {
+      background: #fffbeb;
+      border: 2px solid #fcd34d;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #92400e;
+    }
+
+    .setup-notice strong {
+      color: #78350f;
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase
+    }
+
+    .setup-notice code {
+      background: rgba(0, 0, 0, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem
+    }
+
+    .form-body {
+      padding: 36px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    .form-group {
+      margin-bottom: 20px
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all .2s;
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%237a7568' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 42px
+    }
+
+    .form-group select option {
+      background: #fff;
+      color: var(--text)
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--text);
+      background: #fff;
+      box-shadow: 4px 4px 0 var(--text)
+    }
+
+    .form-group textarea {
+      height: 130px;
+      resize: none
+    }
+
+    /* PREVIEW */
+    .preview-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      display: inline-block;
+      animation: blink 1.4s infinite
+    }
+
+    .phone-preview {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.7;
+      min-height: 70px;
+      transition: all .3s;
+    }
+
+    .phone-preview.active {
+      border-color: var(--green);
+      background: #f0fff4;
+      color: var(--text)
+    }
+
+    /* SEND BUTTON */
+    .send-btn {
+      width: 100%;
+      padding: 20px 24px;
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .send-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateX(-101%);
+      transition: transform .35s ease
+    }
+
+    .send-btn:hover::after {
+      transform: translateX(0)
+    }
+
+    .send-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 0 rgba(26, 26, 46, 0.25)
+    }
+
+    .send-btn span,
+    .send-btn svg {
+      position: relative;
+      z-index: 1
+    }
+
+    .send-btn:active {
+      transform: translateY(0);
+      box-shadow: none
+    }
+
+    .send-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none
+    }
+
+    .send-btn:disabled::after {
+      display: none
+    }
+
+    .send-note {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6
+    }
+
+    .send-note strong {
+      color: var(--text)
+    }
+
+    /* SPINNER */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* SUCCESS VIEW */
+    #successView {
+      display: none;
+      padding: 50px 36px;
+      text-align: center
+    }
+
+    .success-ring {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--accent2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 2.2rem;
+      color: #fff;
+      animation: popIn .5s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    .success-title {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px
+    }
+
+    .success-sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto
+    }
+
+    /* RECEIPT */
+    .sms-receipt {
+      background: var(--accent2);
+      border-radius: var(--radius);
+      padding: 22px 26px;
+      text-align: left;
+      margin: 0 auto 28px;
+      max-width: 480px;
+    }
+
+    .receipt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 14px;
+    }
+
+    .receipt-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.1em
+    }
+
+    .receipt-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-top: 3px
+    }
+
+    .receipt-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 600;
+      background: #166534;
+      color: #bbf7d0;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .receipt-body {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.8
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    .reset-btn {
+      padding: 14px 28px;
+      background: transparent;
+      border: 2px solid var(--text);
+      border-radius: 50px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .reset-btn:hover {
+      background: var(--text);
+      color: var(--bg)
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 50px;
+      padding: 14px 28px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      z-index: 800;
+      transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
+      white-space: nowrap;
+      border: 2px solid var(--text);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0)
+    }
+
+    .toast.err {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff
+    }
+
+    .toast.ok {
+      background: #166534;
+      border-color: #166534;
+      color: #fff
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 2px solid var(--text);
+      padding: 28px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: var(--bg);
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s
+    }
+
+    footer a:hover {
+      color: var(--text)
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp .65s ease forwards
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .delay-1 {
+      animation-delay: .1s
+    }
+
+    .delay-2 {
+      animation-delay: .2s
+    }
+
+    .delay-3 {
+      animation-delay: .3s
+    }
+
+    @media(max-width:900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 50px 24px 40px
+      }
+
+      .hero-visual {
+        display: none
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+        padding: 0 24px
+      }
+
+      nav {
+        padding: 14px 20px
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      .form-row {
+        grid-template-columns: 1fr
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="logo" onclick="window.location.href='index.html'">Rent<span>Play</span></div>
+  </nav>
+
+  <section class="hero">
+    <div class="fade-up">
+      <div class="hero-badge">Auto SMS Support</div>
+      <h1>Got a<br>question?<br><em>We're here.</em></h1>
+      <p class="hero-sub">Fill the form and click Send — your message is delivered <strong>automatically</strong> to our
+        support team. No app opens, no extra steps needed.</p>
+      <div class="stat-row">
+        <div class="stat-pill"><span class="dot"></span> Avg. reply in 8 min</div>
+        <div class="stat-pill"><span class="dot" style="background:var(--accent)"></span> Auto-Send Active</div>
+      </div>
+    </div>
+    <div class="hero-visual fade-up delay-2">
+      <div class="auto-badge">⚡ Auto Send</div>
+      <div class="ping-ring"></div>
+      <div class="phone-mock">
+        <div class="phone-notch"></div>
+        <div class="phone-to-tag">To: +91 8185951564</div>
+        <div class="sms-bubble">Rental issue — order #2891</div>
+        <div class="sms-bubble out">On it! Calling in 5 min.</div>
+        <div class="sms-delivered">✓✓ Delivered automatically</div>
+        <div class="sms-time">RentPlay Support · Just now</div>
+      </div>
+      <div class="hero-label">Click Send → SMS Auto-Delivered</div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+
+    <aside class="sidebar fade-up delay-1">
+      <div class="section-label">Contact Info</div>
+
+      <div class="info-card">
+        <div class="info-card-top">
+          <div class="info-icon-box">📧</div>
+          <div class="info-title">Email Us</div>
+        </div>
+        <p class="info-text">support@rentplay.com<br>Response within 2 hours</p>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-top">
+          <div class="info-icon-box">📞</div>
+          <div class="info-title">Call Us</div>
+        </div>
+        <p class="info-text">Mon–Sat, 9AM – 4PM IST</p>
+        <div class="phone-tag">+91 8185951564</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-top">
+          <div class="info-icon-box">📍</div>
+          <div class="info-title">Office</div>
+        </div>
+        <p class="info-text"> City<br>Bhimavaram, Andhra Pradesh 534208</p>
+      </div>
+
+      <div class="info-card sms-highlight">
+        <div class="info-card-top">
+          <div class="info-icon-box">⚡</div>
+          <div class="info-title">Auto SMS Delivery</div>
+        </div>
+        <p class="info-text">Click Send → our server instantly delivers your message to <strong style="color:#fff">+91
+            8185951564</strong>. No app, no extra tap needed.</p>
+      </div>
+
+      <div class="how-card">
+        <div class="how-title">How It Works</div>
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-text"><strong>Fill</strong> your name, email & message</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-text"><strong>Click</strong> the Send button once</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-text"><strong>SMS auto-delivers</strong> to RentPlay instantly via our server</div>
+        </div>
+        <div class="how-step" style="margin-bottom:0">
+          <div class="how-num">4</div>
+          <div class="how-text"><strong>We call/text you back</strong> within minutes</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-box fade-up delay-3">
+      <div class="form-header">
+        <div class="form-header-left">
+          <div class="form-header-title">Send us a Message</div>
+          <div class="form-header-sub">AUTO-DELIVERED TO → +91 8185951564</div>
+        </div>
+        <div class="form-header-right">
+          <div class="auto-send-badge">Auto Send</div>
+          <div class="dest-to">via Fast2SMS API</div>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <div id="formView">
+
+          <!--
+        ╔══════════════════════════════════════════════════════════════╗
+        ║  DEVELOPER SETUP — READ BEFORE DEPLOYING                    ║
+        ║                                                              ║
+        ║  This page uses Fast2SMS API to auto-send SMS.              ║
+        ║  Steps to activate:                                          ║
+        ║                                                              ║
+        ║  1. Sign up FREE at https://www.fast2sms.com                ║
+        ║  2. Copy your API key from Dashboard → Dev API              ║
+        ║  3. Replace YOUR_FAST2SMS_API_KEY below in the JS           ║
+        ║  4. Fast2SMS free plan: 200 SMS/month free                   ║
+        ║                                                              ║
+        ║  Alternative APIs: msg91.com · textlocal.in · twilio.com    ║
+        ╚══════════════════════════════════════════════════════════════╝
+        -->
+
+          <div class="setup-notice">
+            <strong>⚙ Developer Note</strong>
+            Replace <code>YOUR_FAST2SMS_API_KEY</code> in the script below with your
+            <a href="https://www.fast2sms.com" target="_blank" style="color:#92400e;font-weight:600">Fast2SMS</a> API
+            key to activate auto-send.
+            Free plan gives 200 SMS/month. No credit card needed.
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="name" placeholder="John Doe" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" id="userPhone" placeholder="9876543210" oninput="updatePreview()" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="ram@gmail.com" oninput="updatePreview()" />
+          </div>
+
+          <div class="form-group">
+            <label>Subject</label>
+            <select id="subject" onchange="updatePreview()">
+              <option value="General Inquiry">General Inquiry</option>
+              <option value="Rental Issue">Rental Issue</option>
+              <option value="Delivery Problem">Delivery Problem</option>
+              <option value="Payment Question">Payment Question</option>
+              <option value="Partnership">Partnership</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="message" placeholder="Describe your issue or question in detail..."
+              oninput="updatePreview()"></textarea>
+          </div>
+
+          <div class="preview-label"><span class="live-dot"></span> SMS Preview (what RentPlay receives)</div>
+          <div class="phone-preview" id="preview">Start typing above to preview the SMS...</div>
+
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            <span>SEND MESSAGE TO RENTPLAY</span>
+          </button>
+
+          <p class="send-note">
+            ⚡ Message is <strong>automatically delivered</strong> to +91 8185951564 — no extra steps.<br>
+            Our team will call or text you back within minutes.
+          </p>
+        </div>
+
+        <!-- SUCCESS VIEW -->
+        <div id="successView">
+          <div class="success-ring">✓</div>
+          <div class="success-title">Message Sent!</div>
+          <p class="success-sub">Your message was automatically delivered to RentPlay support. Our team will contact you
+            shortly.</p>
+
+          <div class="sms-receipt">
+            <div class="receipt-header">
+              <div>
+                <div class="receipt-label">Delivered To</div>
+                <div class="receipt-num">+91 8185951564</div>
+              </div>
+              <div class="receipt-status">✓ SENT</div>
+            </div>
+            <div class="receipt-body" id="receiptBody"></div>
+          </div>
+
+          <div class="action-row">
+            <button class="reset-btn" onclick="resetForm()">↩ Send Another Message</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="logo" style="font-size:1.1rem">Rent<span>Play</span></div>
+    <div>© 2026 RentPlay · Rent smart, play more.</div>
+    <div style="display:flex;gap:20px">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="Support.html" style="color:var(--text);font-weight:600">Support</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    //  CONFIG — Replace with your actual API key
+    // ═══════════════════════════════════════════════════════════
+    const FAST2SMS_API_KEY = 'mx1fN5ilyRIOz1pZAQwn8UiVQZgx0wstNQ3LoQmf3xOYcLQWcdh03dU97anH'; // ← paste here
+    const RENTPLAY_PHONE = '8185951564';             // without +91
+    // ═══════════════════════════════════════════════════════════
+
+    let lastSMSText = '';
+
+    function buildSMSText() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+      return (
+        `[RentPlay Support]\n` +
+        `Name: ${name}\n` +
+        `Phone: ${phone}\n` +
+        `Email: ${email}\n` +
+        `Subject: ${subject}\n` +
+        `Message: ${message}`
+      );
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+      const preview = document.getElementById('preview');
+
+      if (!name && !email && !message && !phone) {
+        preview.textContent = 'Start typing above to preview the SMS...';
+        preview.classList.remove('active');
+        return;
+      }
+      preview.classList.add('active');
+      const lines = [
+        '[RentPlay Support]',
+        name ? `Name: ${name}` : null,
+        phone ? `Phone: ${phone}` : null,
+        email ? `Email: ${email}` : null,
+        `Subject: ${subject}`,
+        message ? `Message: ${message}` : null,
+      ].filter(Boolean);
+      preview.innerHTML = lines.join('<br>');
+    }
+
+    function validate() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      if (!name) { showToast('❌ Please enter your name.', 'err'); return false; }
+      if (!phone || phone.length < 10) { showToast('❌ Please enter a valid 10-digit phone number.', 'err'); return false; }
+      if (!email || !validEmail(email)) { showToast('❌ Please enter a valid email.', 'err'); return false; }
+      if (!msg) { showToast('❌ Please write a message.', 'err'); return false; }
+      return true;
+    }
+
+    async function sendMessage() {
+      if (!validate()) return;
+
+      const smsText = buildSMSText();
+      lastSMSText = smsText;
+
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<div class="spinner"></div><span>SENDING...</span>`;
+
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('userPhone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value.trim()
+      };
+
+      try {
+        // Determine API URL (handle dev environments where frontend/backend might be on different ports)
+        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? `http://localhost:3000/api/support`
+          : '/api/support';
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          if (result.smsSuccess) {
+            showSuccess(smsText);
+            showToast('✅ Message sent and SMS delivered!', 'ok');
+          } else if (result.smsError && result.smsError.includes('transaction of 100 INR')) {
+            showToast('⚠ Fast2SMS requires a 100 INR recharge to send API messages.', 'err');
+            if (confirm("Fast2SMS API is restricted (requires 100 INR recharge). Would you like to open your phone's SMS app to send this manually?")) {
+              fallbackToSMSApp(smsText);
+            }
+          } else {
+            showToast(`⚠ Message saved, but SMS failed: ${result.smsError || 'Unknown Error'}`, 'err');
+            if (confirm("SMS delivery failed. Open SMS app to send manually?")) {
+              fallbackToSMSApp(smsText);
+            }
+          }
+        } else {
+          showToast(`❌ Failed: ${result.error || 'Server Error'}`, 'err');
+        }
+      } catch (err) {
+        console.error('API Error:', err);
+        showToast('❌ Network error. Make sure your server (server.js) is running on port 3000.', 'err');
+      } finally {
+        resetBtn(btn);
+      }
+    }
+
+    function fallbackToSMSApp(smsText) {
+      // If API fails, open SMS app as fallback
+      const ua = navigator.userAgent || '';
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const encoded = encodeURIComponent(smsText);
+      const smsURL = isIOS
+        ? `sms:${RENTPLAY_PHONE}&body=${encoded}`
+        : `sms:${RENTPLAY_PHONE}?body=${encoded}`;
+      window.location.href = smsURL;
+      setTimeout(() => {
+        showSuccess(smsText);
+        showToast('⚠ API unavailable — SMS app opened as backup.', 'err');
+      }, 700);
+    }
+
+    function showSuccess(smsText) {
+      document.getElementById('formView').style.display = 'none';
+      const sv = document.getElementById('successView');
+      sv.style.display = 'block';
+      document.getElementById('receiptBody').innerHTML =
+        smsText.replace(/\n/g, '<br>');
+    }
+
+    function resetForm() {
+      document.getElementById('name').value = '';
+      document.getElementById('userPhone').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('subject').selectedIndex = 0;
+      document.getElementById('message').value = '';
+      document.getElementById('successView').style.display = 'none';
+      document.getElementById('formView').style.display = 'block';
+      updatePreview();
+    }
+
+    function resetBtn(btn) {
+      btn.disabled = false;
+      btn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      <span>SEND MESSAGE TO RENTPLAY</span>`;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast' + (type ? ' ' + type : '');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 5000);
+    }
+  </script>
+</body>
+
+</html>

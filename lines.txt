@@ -1,0 +1,11 @@
+﻿                        <p>ðŸ’° <b>Total Bill:</b> â‚¹${order.price}</p>
+                        <p>â³ <b>Duration:</b> ${order.days} Day(s)</p>
+                        <p>ðŸ“… <b>Schedule:</b> ${order.booking_date ? order.booking_date.toString().split('T')[0] : 'Today'} (${order.booking_day}) at ${order.booking_time}</p>
+                        <p>ðŸ“ <b>Address:</b> ${order.address}</p>
+                        <p>ðŸ’³ <b>Payment:</b> ${order.payment_mode.toUpperCase()}</p>
+                    </div>
+                    <button id="acceptBtn" onclick="confirmOrder()" style="width: 100%; height: 60px; background: #00b894; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer;">
+                        ACCEPT DELIVERY
+                    </button>
+                    <p id="msg" style="margin-top: 20px; font-weight: bold; color: #2d3436;"></p>
+                </div>
