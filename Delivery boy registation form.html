@@ -52,6 +52,19 @@
     .field select { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a82a0' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px }
     .field select option { background:#1b1f2b }
     .field textarea { resize:vertical; min-height:80px; line-height:1.5 }
+    /* Searchable Datalist Styling */
+    .field input[list]::-webkit-calendar-picker-indicator {
+      display: none !important;
+    }
+    .field .search-ico {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--muted);
+      pointer-events: none;
+    }
     .input-icon { position:relative }
     .input-icon input { padding-left:38px }
     .input-icon .ico { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:15px; pointer-events:none }
@@ -185,14 +198,18 @@
     <div class="grid grid-2">
       <div class="field" style="grid-column:1/-1">
         <label>Assigned Work Store <span class="req">*</span></label>
-        <select id="assignedStore">
-          <option value="">-- Select Registered Store Hub --</option>
-          <option value="1">Bhimavaram Central-Zone (HQ)</option>
-          <option value="2">Palakollu South-East Hub</option>
-          <option value="3">Tanuku North Hub</option>
-          <option value="4">Akividu West Store</option>
-          <option value="5">Undi Service Point</option>
-        </select>
+        <div class="input-icon">
+          <span class="ico">🏪</span>
+          <input type="text" id="assignedStore" list="storeOptions" placeholder="Search Store Hub..." />
+          <span class="search-ico">🔍</span>
+          <datalist id="storeOptions">
+            <option value="Bhimavaram Central-Zone (HQ)">
+            <option value="Palakollu South-East Hub">
+            <option value="Tanuku North Hub">
+            <option value="Akividu West Store">
+            <option value="Undi Service Point">
+          </datalist>
+        </div>
       </div>
       <div class="field" id="fld-firstName">
         <label>First Name <span class="req">*</span></label>
@@ -204,7 +221,18 @@
       </div>
       <div class="field" id="fld-dob">
         <label>Date of Birth <span class="req">*</span></label>
-        <input type="date" id="dob" onchange="clearErr('fld-dob')" />
+        <div class="input-icon">
+          <span class="ico">📅</span>
+          <input type="text" id="dob" list="dobYears" placeholder="DD-MM-YYYY" onchange="clearErr('fld-dob')" />
+          <span class="search-ico">🔍</span>
+          <datalist id="dobYears">
+            <option value="01-01-2008">
+            <option value="01-01-2005">
+            <option value="01-01-2000">
+            <option value="01-01-1995">
+            <option value="01-01-1990">
+          </datalist>
+        </div>
       </div>
       <div class="field">
         <label>Gender <span class="req">*</span></label>
@@ -234,15 +262,18 @@
         <textarea id="address" placeholder="House No., Street, Area, Landmark…"></textarea>
       </div>
       <div class="field"><label>City <span class="req">*</span></label><input type="text" id="city" placeholder="e.g. Hyderabad" /></div>
-      <div class="field">
+      <div class="field" id="fld-state">
         <label>State <span class="req">*</span></label>
-        <select id="state">
-          <option value="">Select State</option>
-          <option>Andhra Pradesh</option><option>Telangana</option><option>Tamil Nadu</option>
-          <option>Karnataka</option><option>Maharashtra</option><option>Delhi</option>
-          <option>Gujarat</option><option>Rajasthan</option><option>Uttar Pradesh</option>
-          <option>West Bengal</option><option>Kerala</option><option>Punjab</option>
-        </select>
+        <div class="input-icon">
+          <input type="text" id="state" list="stateOptions" placeholder="Search State..." oninput="clearErr('fld-state')" />
+          <span class="search-ico">🔍</span>
+          <datalist id="stateOptions">
+            <option value="Andhra Pradesh"><option value="Telangana"><option value="Tamil Nadu">
+            <option value="Karnataka"><option value="Maharashtra"><option value="Delhi">
+            <option value="Gujarat"><option value="Rajasthan"><option value="Uttar Pradesh">
+            <option value="West Bengal"><option value="Kerala"><option value="Punjab">
+          </datalist>
+        </div>
       </div>
       <div class="field"><label>PIN Code <span class="req">*</span></label><input type="text" id="pincode" placeholder="500001" maxlength="6" /></div>
       <div class="field"><label>Landmark</label><input type="text" id="landmark" placeholder="Near bus stop, temple…" /></div>
@@ -274,17 +305,24 @@
       <div class="field"><label>Registration Number <span class="req">*</span></label><input type="text" id="regNumber" placeholder="TS 09 AB 1234" style="text-transform:uppercase" /></div>
       <div class="field">
         <label>Year of Manufacture</label>
-        <select id="yearMfg">
-          <option value="">Select Year</option>
-          <option>2026</option><option>2024</option><option>2023</option><option>2022</option>
-          <option>2021</option><option>2020</option><option>2019</option><option>2018</option>
-          <option>2017</option><option>2016</option><option>2015 or older</option>
-        </select>
+        <div class="input-icon">
+          <input type="text" id="yearMfg" list="yearOptions" placeholder="Search Year..." />
+          <span class="search-ico">🔍</span>
+          <datalist id="yearOptions">
+            <option value="2026"><option value="2025"><option value="2024"><option value="2023"><option value="2022">
+            <option value="2021"><option value="2020"><option value="2019"><option value="2018">
+            <option value="2017"><option value="2016"><option value="2015">
+          </datalist>
+        </div>
       </div>
-      <div class="field"><label>Insurance Valid Until</label><input type="date" id="insuranceDate" /></div>
+      <div class="field"><label>Insurance Valid Until</label><input type="text" id="insuranceDate" placeholder="DD-MM-YYYY" /></div>
       <div class="field">
         <label>Fuel Type</label>
-        <select id="fuelType"><option value="">Select</option><option>Petrol</option><option>Diesel</option><option>Electric</option><option>CNG</option></select>
+        <div class="input-icon">
+          <input type="text" id="fuelType" list="fuelOptions" placeholder="Search Fuel..." />
+          <span class="search-ico">🔍</span>
+          <datalist id="fuelOptions"><option value="Petrol"><option value="Diesel"><option value="Electric"><option value="CNG"></datalist>
+        </div>
       </div>
       <div class="field">
         <label>Ownership</label>
@@ -311,7 +349,14 @@
       </div>
       <div class="field">
         <label>Experience</label>
-        <select id="experience"><option value="">Select</option><option>No experience (Fresher)</option><option>Less than 6 months</option><option>6 months – 1 year</option><option>1 – 2 years</option><option>2 – 5 years</option><option>5+ years</option></select>
+        <div class="input-icon">
+          <input type="text" id="experience" list="expOptions" placeholder="Search Exp..." />
+          <span class="search-ico">🔍</span>
+          <datalist id="expOptions">
+            <option value="Fresher"><option value="Less than 6 months"><option value="6 months – 1 year">
+            <option value="1 – 2 years"><option value="2 – 5 years"><option value="5+ years">
+          </datalist>
+        </div>
       </div>
       <div class="field" style="grid-column:1/-1">
         <label>Preferred Delivery Zones <span class="req">*</span></label>
@@ -433,7 +478,11 @@
         <div class="field"><label>Contact Name <span class="req">*</span></label><input type="text" id="emergencyName" placeholder="e.g. Suresh Kumar" /></div>
         <div class="field">
           <label>Relationship <span class="req">*</span></label>
-          <select id="emergencyRelation"><option value="">Select</option><option>Father</option><option>Mother</option><option>Spouse</option><option>Sibling</option><option>Friend</option><option>Other</option></select>
+          <div class="input-icon">
+            <input type="text" id="emergencyRelation" list="relOptions" placeholder="Search Rel..." />
+            <span class="search-ico">🔍</span>
+            <datalist id="relOptions"><option value="Father"><option value="Mother"><option value="Spouse"><option value="Sibling"><option value="Friend"><option value="Other"></datalist>
+          </div>
         </div>
         <div class="field"><label>Emergency Mobile <span class="req">*</span></label><input type="tel" id="emergencyMobile" placeholder="+91 98765 43210" /></div>
       </div>
@@ -521,8 +570,17 @@ function validateStep1() {
   if (!ln) { markErr('fld-lastName','Last name is required'); ok=false; } else clearErr('fld-lastName');
   if (!dob) { markErr('fld-dob','Date of birth is required'); ok=false; }
   else {
-    const age = (new Date()-new Date(dob))/(1000*60*60*24*365.25);
-    if (age<18) { markErr('fld-dob','Must be at least 18 years old'); ok=false; } else clearErr('fld-dob');
+    // Parse DD-MM-YYYY
+    const parts = dob.split('-');
+    const birthDate = (parts.length === 3) ? new Date(parts[2], parts[1]-1, parts[0]) : new Date(dob);
+    
+    if (isNaN(birthDate.getTime())) {
+      markErr('fld-dob','Invalid date format (use DD-MM-YYYY)');
+      ok = false;
+    } else {
+      const age = (new Date() - birthDate) / (1000*60*60*24*365.25);
+      if (age < 18) { markErr('fld-dob','Must be at least 18 years old'); ok=false; } else clearErr('fld-dob');
+    }
   }
   if (!mob) { markErr('fld-mobile','Mobile number is required'); ok=false; } else clearErr('fld-mobile');
   if (ok) nextStep(2);
@@ -569,33 +627,32 @@ async function verifyWithAI(file, expectedType) {
     let isCorrect = (detectedType === expectedType);
     let rejectionReason = null;
 
-    // Name matching logic (Verify if document belongs to the user)
-    if (isCorrect) {
-      const userFirstName = document.getElementById('firstName').value.trim().toLowerCase();
-      const userLastName = document.getElementById('lastName').value.trim().toLowerCase();
+    // GLOBAL NAME MATCHING (Applied to ALL documents: Aadhaar, PAN, DL, etc.)
+    const userFirstName = document.getElementById('firstName').value.trim().toLowerCase();
+    const userLastName = document.getElementById('lastName').value.trim().toLowerCase();
+    
+    // Check if name is provided in Step 1 first
+    if (!userFirstName && !userLastName) {
+      isCorrect = false;
+      rejectionReason = "Please fill in your name in Step 1 before uploading documents.";
+    } else {
+      const hasFirstName = userFirstName && ocrText.includes(userFirstName);
+      const hasLastName = userLastName && ocrText.includes(userLastName);
       
-      // Safety check: ensure name is provided in Step 1
-      if (!userFirstName && !userLastName) {
+      // If neither first nor last name is found in the OCR text on ANY document
+      if (!hasFirstName && !hasLastName) {
         isCorrect = false;
-        rejectionReason = "Please fill in your name in Step 1 before uploading documents.";
-      } else {
-        const hasFirstName = userFirstName && ocrText.includes(userFirstName);
-        const hasLastName = userLastName && ocrText.includes(userLastName);
-        
-        // If neither first nor last name is found in the OCR text
-        if (!hasFirstName && !hasLastName) {
-          isCorrect = false;
-          rejectionReason = `Name mismatch: Document name does not match "${userFirstName} ${userLastName}".`;
-        }
+        rejectionReason = `Name mismatch: Your name ("${userFirstName} ${userLastName}") was not detected on this ${detectedType || 'document'}.`;
       }
     }
     
-    // If it's a known document but in the wrong slot
-    if (!isCorrect && !rejectionReason) {
+    // If it's the wrong slot (only if it passed name check)
+    if (isCorrect && (detectedType !== expectedType)) {
+      isCorrect = false;
       if (detectedType !== "Unknown Document") {
-        rejectionReason = `Detected ${detectedType} in the ${expectedType} slot. Please upload the correct document.`;
+        rejectionReason = `Wrong Slot: Detected ${detectedType} where ${expectedType} was expected.`;
       } else {
-        rejectionReason = "Could not identify this as a valid document. Please ensure the image is clear.";
+        rejectionReason = `This does not look like a clear ${expectedType}. Please re-upload.`;
       }
     }
 
@@ -604,7 +661,7 @@ async function verifyWithAI(file, expectedType) {
       is_correct_type: isCorrect,
       is_authentic_looking: true,
       rejection_reason: rejectionReason,
-      verification_notes: isCorrect ? "Type and Name verified successfully" : "Verification failed"
+      verification_notes: isCorrect ? "Type and Identity verified" : "Verification failed"
     };
   } catch (err) {
     console.error("OCR Error:", err);
