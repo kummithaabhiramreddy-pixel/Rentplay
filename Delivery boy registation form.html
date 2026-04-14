@@ -112,13 +112,6 @@
     .tag-ok { background:rgba(34,217,138,.15); color:var(--green) }
     .tag-err { background:rgba(255,92,92,.15); color:var(--red) }
     .tag-warn { background:rgba(255,200,50,.15); color:#f5c518 }
-    .match-banner { margin-top:.85rem; padding:.75rem 1rem; border-radius:var(--radius-sm); font-size:13px; font-weight:500; display:none; align-items:center; gap:8px }
-    .match-banner.show { display:flex }
-    .match-banner.ok { background:rgba(34,217,138,.08); border:1px solid rgba(34,217,138,.25); color:var(--green) }
-    .match-banner.err { background:rgba(255,92,92,.08); border:1px solid rgba(255,92,92,.25); color:#ff7878 }
-    .doc-error { margin-top:.75rem; padding:.75rem 1rem; background:rgba(255,92,92,.08); border:1px solid rgba(255,92,92,.25); border-radius:9px; font-size:13px; color:#ff7878; font-weight:500 }
-    .doc-req-note { font-size:12px; color:var(--muted); margin-top:.75rem; padding:.65rem 1rem; background:rgba(255,107,43,.06); border-left:3px solid var(--orange); border-radius:0 6px 6px 0; line-height:1.5 }
-    /* doc-count progress bar */
     .doc-progress { margin-top:1rem; padding:.75rem 1rem; background:rgba(34,217,138,.06); border:1px solid rgba(34,217,138,.18); border-radius:var(--radius-sm); display:none }
     .doc-progress.show { display:block }
     .doc-progress-label { font-size:12px; color:var(--green); font-weight:600; margin-bottom:6px }
@@ -126,6 +119,8 @@
     .doc-progress-fill { height:100%; background:var(--green); border-radius:10px; transition:width .4s ease }
     .field-error input,.field-error select,.field-error textarea { border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(255,92,92,.12)!important }
     .field-error-msg { font-size:11px; color:var(--red); margin-top:2px }
+    .doc-error { margin-top:.75rem; padding:.75rem 1rem; background:rgba(255,92,92,.08); border:1px solid rgba(255,92,92,.25); border-radius:9px; font-size:13px; color:#ff7878; font-weight:500 }
+    .doc-req-note { font-size:12px; color:var(--muted); margin-top:.75rem; padding:.65rem 1rem; background:rgba(255,107,43,.06); border-left:3px solid var(--orange); border-radius:0 6px 6px 0; line-height:1.5 }
     .success-overlay { position:fixed; inset:0; background:var(--dark); z-index:10000; display:flex; align-items:center; justify-content:center; text-align:center; opacity:0; pointer-events:none; transition:opacity .5s ease }
     .success-overlay.show { opacity:1; pointer-events:auto }
     .success-card { padding:3rem; background:var(--card); border:1px solid var(--border); border-radius:2rem; box-shadow:0 30px 60px rgba(0,0,0,.5); max-width:400px; width:90% }
@@ -135,6 +130,7 @@
     @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
@@ -349,17 +345,16 @@
     </div>
   </div>
 
-  <!-- Step 3: Documents with AI verification -->
+  <!-- Step 3: Documents with AI verification (NO name/DOB check) -->
   <div class="section" id="card3">
     <div class="section-head">
       <div class="section-icon">📄</div>
-      <div><div class="section-title">Documents Upload</div><div class="section-sub">AI verifies each document — at least 1 must be verified</div></div>
+      <div><div class="section-title">Documents Upload</div><div class="section-sub">AI verifies document type only — at least 1 must be verified</div></div>
     </div>
 
-    <!-- ✅ CHANGED: Updated note — only 1 document required -->
     <div class="doc-req-note">
       ✅ <strong>Upload at least 1 document</strong> from any of the options below (Aadhaar, PAN, Driving Licence, RC Book, Insurance, or Bank Passbook).
-      You may upload more for faster approval. AI will verify the document type and cross-check your name &amp; date of birth from Step 1.
+      You may upload more for faster approval. AI will verify the document type to ensure the correct document is uploaded in the correct slot.
     </div>
 
     <div class="doc-grid" style="margin-top:1.1rem">
@@ -407,7 +402,7 @@
       </div>
     </div>
 
-    <!-- ✅ NEW: Doc count progress indicator -->
+    <!-- Doc count progress indicator -->
     <div class="doc-progress" id="docProgress">
       <div class="doc-progress-label" id="docProgressLabel">✅ 0 document verified</div>
       <div class="doc-progress-bar"><div class="doc-progress-fill" id="docProgressFill" style="width:0%"></div></div>
@@ -418,9 +413,6 @@
       <div class="ai-panel-title">🤖 AI Verification Results</div>
       <div id="aiPanelContent"></div>
     </div>
-
-    <!-- Name/DOB match banner -->
-    <div class="match-banner" id="matchBanner"></div>
 
     <div id="docErrorBox"></div>
 
@@ -476,7 +468,6 @@
 
 <script>
 // ─── State ───────────────────────────────────────────────────────────────────
-// ✅ CHANGED: All documents are optional — none are individually required
 const docMeta = {
   doc1: { required:false, label:'Aadhaar Card',   verified:false, rejected:false },
   doc2: { required:false, label:'PAN Card',        verified:false, rejected:false },
@@ -537,72 +528,88 @@ function validateStep1() {
   if (ok) nextStep(2);
 }
 
-// ─── File → Base64 ────────────────────────────────────────────────────────────
-function fileToBase64(file) {
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result.split(',')[1]);
-    r.onerror=rej; r.readAsDataURL(file);
-  });
-}
-
-// ─── AI Verification ──────────────────────────────────────────────────────────
-async function verifyWithAI(file, expectedType, firstName, lastName, dob) {
-  const isImage = file.type.startsWith('image/');
-  const fullName = `${firstName} ${lastName}`.trim();
-  const dobStr = dob ? new Date(dob).toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
-
-  const system = `You are a strict document verification AI for a delivery partner onboarding system in India.
-Your tasks:
-1. Identify the actual document type visible in the image.
-2. Check if it matches the expected document type EXACTLY. An Aadhaar card uploaded where PAN card is expected = WRONG TYPE.
-3. Extract the name and date of birth from the document (if present).
-4. Compare extracted name with the applicant's registered name (be lenient with case, spacing, minor spelling).
-5. Compare extracted DOB with the applicant's registered DOB.
-6. Flag if the document looks fake, heavily edited, is a screenshot of a screen, or is clearly not a document (e.g., a selfie, random photo).
-7. RC Book, Insurance Copy, Bank Passbook — skip name/DOB check (these don't always have person's name/DOB), set name_match and dob_match to null.
-8. Aadhaar Card and Driving Licence — ALWAYS check name AND DOB.
-9. PAN Card — check name, DOB may not be present so dob_match can be null if not visible.
-
-STRICT RULE: If a document is uploaded in the WRONG slot (e.g., Aadhaar uploaded as PAN, PAN uploaded as Aadhaar), set is_correct_type=false and clearly state what was detected.
-
-Respond ONLY with valid JSON (no markdown, no explanation):
-{
-  "detected_type": "exact document type you see",
-  "is_correct_type": true/false,
-  "is_authentic_looking": true/false,
-  "name_found": "name as printed on document, or null",
-  "dob_found": "DOB as printed on document, or null",
-  "name_match": true/false/null,
-  "dob_match": true/false/null,
-  "rejection_reason": "short reason if rejected, else null",
-  "verification_notes": "one short note about verification"
-}`;
-
-  let userContent;
-  if (isImage) {
-    const b64 = await fileToBase64(file);
-    userContent = [
-      { type:"image", source:{ type:"base64", media_type:file.type, data:b64 } },
-      { type:"text", text:`Expected document: "${expectedType}"\nApplicant name: "${fullName}"\nApplicant DOB: "${dobStr}"\nVerify this document.` }
-    ];
-  } else {
-    userContent = [{ type:"text", text:`A PDF named "${file.name}" was uploaded for the "${expectedType}" slot.\nApplicant name: "${fullName}"\nApplicant DOB: "${dobStr}"\nSince this is a PDF, return: is_correct_type:true, is_authentic_looking:true, name_match:null, dob_match:null, detected_type:"${expectedType}", verification_notes:"PDF uploaded - visual verification skipped", rejection_reason:null, name_found:null, dob_found:null` }];
+// ─── AI Verification (Tesseract OCR for browser-side "AI") ────────────────
+async function verifyWithAI(file, expectedType) {
+  if (!file.type.startsWith('image/')) {
+    // Non-image files (PDFs) — pass through with caution
+    return {
+      detected_type: expectedType,
+      is_correct_type: true,
+      is_authentic_looking: true,
+      rejection_reason: null,
+      verification_notes: "PDF file uploaded. Visual AI check skipped."
+    };
   }
 
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      model:"claude-sonnet-4-20250514",
-      max_tokens:1000,
-      system,
-      messages:[{ role:"user", content:userContent }]
-    })
-  });
-  const data = await resp.json();
-  const raw = data.content?.find(b=>b.type==='text')?.text || '{}';
-  return JSON.parse(raw.replace(/```json|```/g,'').trim());
+  try {
+    // Initialize Tesseract worker
+    const worker = await Tesseract.createWorker('eng');
+    const { data: { text } } = await worker.recognize(file);
+    await worker.terminate();
+
+    const ocrText = text.toLowerCase();
+    
+    // Detection logic based on keywords
+    let detectedType = "Unknown Document";
+    
+    // Specific keywords for Indian Documents
+    const hasAadhar = ocrText.includes('aadhaar') || ocrText.includes('unique identification') || ocrText.includes('government of india');
+    const hasPan = ocrText.includes('income tax department') || ocrText.includes('permanent account number') || ocrText.includes('pan ');
+    const hasDL = ocrText.includes('driving licence') || ocrText.includes('license') || ocrText.includes('transport');
+    const hasRC = ocrText.includes('registration certificate') || ocrText.includes('form 23') || ocrText.includes('rc book');
+    const hasBank = ocrText.includes('bank') || ocrText.includes('passbook') || ocrText.includes('ifsc') || ocrText.includes('branch');
+
+    if (hasAadhar) detectedType = "Aadhaar Card";
+    else if (hasPan) detectedType = "PAN Card";
+    else if (hasDL) detectedType = "Driving Licence";
+    else if (hasRC) detectedType = "RC Book";
+    else if (hasBank) detectedType = "Bank Passbook";
+
+    // Compare with expected type
+    let isCorrect = (detectedType === expectedType);
+    let rejectionReason = null;
+
+    // Name matching logic (Verify if document belongs to the user)
+    if (isCorrect) {
+      const userFirstName = document.getElementById('firstName').value.trim().toLowerCase();
+      const userLastName = document.getElementById('lastName').value.trim().toLowerCase();
+      
+      // Safety check: ensure name is provided in Step 1
+      if (!userFirstName && !userLastName) {
+        isCorrect = false;
+        rejectionReason = "Please fill in your name in Step 1 before uploading documents.";
+      } else {
+        const hasFirstName = userFirstName && ocrText.includes(userFirstName);
+        const hasLastName = userLastName && ocrText.includes(userLastName);
+        
+        // If neither first nor last name is found in the OCR text
+        if (!hasFirstName && !hasLastName) {
+          isCorrect = false;
+          rejectionReason = `Name mismatch: Document name does not match "${userFirstName} ${userLastName}".`;
+        }
+      }
+    }
+    
+    // If it's a known document but in the wrong slot
+    if (!isCorrect && !rejectionReason) {
+      if (detectedType !== "Unknown Document") {
+        rejectionReason = `Detected ${detectedType} in the ${expectedType} slot. Please upload the correct document.`;
+      } else {
+        rejectionReason = "Could not identify this as a valid document. Please ensure the image is clear.";
+      }
+    }
+
+    return {
+      detected_type: detectedType,
+      is_correct_type: isCorrect,
+      is_authentic_looking: true,
+      rejection_reason: rejectionReason,
+      verification_notes: isCorrect ? "Type and Name verified successfully" : "Verification failed"
+    };
+  } catch (err) {
+    console.error("OCR Error:", err);
+    throw err;
+  }
 }
 
 // ─── Handle Document Upload ───────────────────────────────────────────────────
@@ -616,7 +623,7 @@ async function handleDocUpload(event, docId, expectedType) {
   card.classList.remove('uploaded','rejected','verifying');
   docMeta[docId].verified = false; docMeta[docId].rejected = false;
   delete aiResults[docId];
-  updateAIPanel(); updateMatchBanner(); updateDocProgress();
+  updateAIPanel(); updateDocProgress();
 
   card.classList.add('verifying');
   iconEl.textContent = '⏳';
@@ -624,12 +631,8 @@ async function handleDocUpload(event, docId, expectedType) {
   statusEl.innerHTML = '<span class="spin-sm"></span>AI verifying…';
   titleEl.innerHTML = expectedType;
 
-  const fn = document.getElementById('firstName').value.trim();
-  const ln = document.getElementById('lastName').value.trim();
-  const dob = document.getElementById('dob').value;
-
   try {
-    const result = await verifyWithAI(file, expectedType, fn, ln, dob);
+    const result = await verifyWithAI(file, expectedType);
     aiResults[docId] = result;
     card.classList.remove('verifying');
 
@@ -640,25 +643,19 @@ async function handleDocUpload(event, docId, expectedType) {
       docMeta[docId].verified = true; docMeta[docId].rejected = false;
       iconEl.textContent = '✅';
       statusEl.className = 'doc-status ok';
-      let statusText = '✓ ' + result.detected_type;
-      if (result.name_match === false) statusText += ' · ⚠ Name mismatch';
-      if (result.dob_match === false) statusText += ' · ⚠ DOB mismatch';
-      statusEl.textContent = statusText;
+      statusEl.textContent = '✓ Verified: ' + result.detected_type;
     } else {
       card.classList.add('rejected');
       docMeta[docId].verified = false; docMeta[docId].rejected = true;
       iconEl.textContent = '❌';
       statusEl.className = 'doc-status err';
-      if (!result.is_correct_type) {
-        statusEl.textContent = `Wrong doc: got "${result.detected_type}"`;
-      } else {
-        statusEl.textContent = result.rejection_reason || 'Could not verify';
-      }
+      
+      // Prioritize the detailed rejection reason from the AI
+      statusEl.textContent = result.rejection_reason || 'Could not verify document';
     }
 
     updateAIPanel();
-    updateMatchBanner();
-    updateDocProgress(); // ✅ update count after each verification
+    updateDocProgress();
 
   } catch(err) {
     card.classList.remove('verifying');
@@ -672,7 +669,7 @@ async function handleDocUpload(event, docId, expectedType) {
   }
 }
 
-// ─── ✅ NEW: Doc Progress Counter ─────────────────────────────────────────────
+// ─── Doc Progress Counter ─────────────────────────────────────────────────────
 function updateDocProgress() {
   const verifiedCount = Object.values(docMeta).filter(d => d.verified).length;
   const total = Object.keys(docMeta).length;
@@ -700,64 +697,25 @@ function updateAIPanel() {
   keys.forEach(id => {
     const r = aiResults[id], label = docMeta[id].label;
     if (r.is_correct_type && r.is_authentic_looking) {
-      html += `<div class="ai-result-row"><span class="tag tag-ok">✓ OK</span><span><strong>${label}:</strong> ${r.verification_notes || 'Verified'}</span></div>`;
-      if (r.name_match === false) html += `<div class="ai-result-row"><span class="tag tag-warn">⚠ NAME</span><span>Name on document: "<em>${r.name_found||'?'}</em>" — does not match registered name</span></div>`;
-      if (r.dob_match === false) html += `<div class="ai-result-row"><span class="tag tag-warn">⚠ DOB</span><span>DOB on document: "<em>${r.dob_found||'?'}</em>" — does not match registered DOB</span></div>`;
-      if (r.name_match === true) html += `<div class="ai-result-row"><span class="tag tag-ok">✓ NAME</span><span>Name matched: "${r.name_found}"</span></div>`;
+      html += `<div class="ai-result-row"><span class="tag tag-ok">✓ OK</span><span><strong>${label}:</strong> ${r.verification_notes || 'Document type verified'}</span></div>`;
     } else {
-      const reason = !r.is_correct_type ? `Detected "${r.detected_type}" — expected "${label}"` : (r.rejection_reason||'Verification failed');
+      const reason = !r.is_correct_type
+        ? `Detected "${r.detected_type}" — expected "${label}"`
+        : (r.rejection_reason || 'Verification failed');
       html += `<div class="ai-result-row"><span class="tag tag-err">✗ FAIL</span><span><strong>${label}:</strong> ${reason}</span></div>`;
     }
   });
   content.innerHTML = html;
 }
 
-// ─── Match Banner ─────────────────────────────────────────────────────────────
-function updateMatchBanner() {
-  const banner = document.getElementById('matchBanner');
-  const mismatches = [];
-  let hasPositiveMatch = false;
-
-  Object.entries(aiResults).forEach(([id, r]) => {
-    if (r.is_correct_type && r.is_authentic_looking) {
-      if (r.name_match === false) mismatches.push(`Name mismatch in ${docMeta[id].label} (found: "${r.name_found||'?'}")`);
-      if (r.dob_match === false) mismatches.push(`DOB mismatch in ${docMeta[id].label} (found: "${r.dob_found||'?'}")`);
-      if (r.name_match === true) hasPositiveMatch = true;
-    }
-  });
-
-  if (mismatches.length) {
-    banner.className = 'match-banner show err';
-    banner.innerHTML = '⚠️ ' + mismatches.join(' &nbsp;·&nbsp; ') + '<br><small style="opacity:.8">Please re-upload the correct document matching your registered name &amp; date of birth.</small>';
-  } else if (hasPositiveMatch) {
-    banner.className = 'match-banner show ok';
-    banner.innerHTML = '✅ Name &amp; date of birth successfully verified against uploaded documents.';
-  } else {
-    banner.classList.remove('show');
-  }
-}
-
-// ─── ✅ CHANGED: Validate Doc Step — only 1 verified doc needed ───────────────
+// ─── Validate Doc Step — only 1 verified doc needed ──────────────────────────
 function validateDocStep() {
   const errBox = document.getElementById('docErrorBox');
   errBox.innerHTML = '';
 
-  const errors = [];
-
-  // ✅ KEY CHANGE: Check if at least 1 document is verified
   const verifiedCount = Object.values(docMeta).filter(d => d.verified).length;
   if (verifiedCount === 0) {
-    errors.push('Please upload and verify <strong>at least 1 document</strong> to proceed.');
-  }
-
-  // Check name/DOB mismatches (block if any verified doc has a mismatch)
-  const hasMismatch = Object.values(aiResults).some(r => r.is_correct_type && r.is_authentic_looking && (r.name_match===false || r.dob_match===false));
-  if (hasMismatch) {
-    errors.push('Name or Date of Birth on your documents does not match Step 1 details. Please correct your personal info or re-upload the correct documents.');
-  }
-
-  if (errors.length) {
-    errBox.innerHTML = '<div class="doc-error">⚠️ ' + errors.join('<br>') + '</div>';
+    errBox.innerHTML = '<div class="doc-error">⚠️ Please upload and verify <strong>at least 1 document</strong> to proceed.</div>';
     errBox.scrollIntoView({behavior:'smooth', block:'nearest'});
     return;
   }
