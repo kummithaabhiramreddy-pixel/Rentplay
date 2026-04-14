@@ -281,42 +281,42 @@ nav a:hover{color:var(--text)}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================
+   STORAGE KEY — all reviews live in localStorage under this key
+   ============================================================ */
 const STORE = 'rentplay_reviews_v2';
+
 const HINTS = ['','Terrible 😞','Poor 😕','Average 😐','Good 😊','Excellent! 🎉'];
 const COLORS = ['#2d1f6e','#1a3a2e','#3a1a1a','#3a2e10','#1a2e3a','#2e1a3a','#1f2d3a','#3a1a2e','#1a2f1a','#2e2b1a'];
 let activeFilter = 'all';
 let rating = 0;
 
-/* state */
-let cachedReviews = [];
-let serverOnline = true;
-const isLocalHTML = !window.location.hostname || window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-const apiBase = isLocalHTML ? 'http://localhost:3000' : '';
-
-async function fetchReviews() {
-    try {
-        const res = await fetch(`${apiBase}/api/reviews`);
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        const json = await res.json();
-        cachedReviews = Array.isArray(json) ? json : [];
-        serverOnline = true;
-    } catch (e) {
-        console.error('Failed to fetch reviews:', e.message);
-        cachedReviews = [];
-        serverOnline = false;
-    }
+/* ── localStorage helpers ── */
+function loadReviews() {
+  try {
+    const raw = localStorage.getItem(STORE);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
 }
 
-/* helpers */
+function saveReviews(reviews) {
+  localStorage.setItem(STORE, JSON.stringify(reviews));
+}
+
+function nextId(reviews) {
+  return reviews.length ? Math.max(...reviews.map(r => r.id || 0)) + 1 : 1;
+}
+
+/* ── helpers ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function initials(n){ return n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?'; }
 function avatarColor(n){ let h=0; for(let c of n) h=(h*31+c.charCodeAt(0))&0xffffffff; return COLORS[Math.abs(h)%COLORS.length]; }
 function starsHtml(r){ return [1,2,3,4,5].map(i=>`<span class="${i<=r?'filled':'empty'}">★</span>`).join(''); }
 function fmtDate(ts){ return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
 
-/* stats */
+/* ── stats ── */
 function updateStats(){
-  const all = cachedReviews;
+  const all = loadReviews();
   const n = all.length;
   const dist = {5:0,4:0,3:0,2:0,1:0};
   let sum = 0;
@@ -340,34 +340,23 @@ function updateStats(){
   }).join('');
 }
 
-/* render reviews */
+/* ── render reviews ── */
 function renderReviews(){
-  const all = cachedReviews;
+  const all = loadReviews();
   const sort = document.getElementById('sortSelect').value;
   let list = activeFilter==='all' ? [...all] : all.filter(r=>r.rating===activeFilter);
 
   list.sort((a,b)=>{
-    const tsA = new Date(a.created_at || a.timestamp || 0).getTime();
-    const tsB = new Date(b.created_at || b.timestamp || 0).getTime();
-    if(sort==='newest') return tsB-tsA;
-    if(sort==='oldest') return tsA-tsB;
-    if(sort==='highest') return b.rating-a.rating;
-    if(sort==='lowest') return a.rating-b.rating;
+    if(sort==='newest') return b.timestamp - a.timestamp;
+    if(sort==='oldest') return a.timestamp - b.timestamp;
+    if(sort==='highest') return b.rating - a.rating;
+    if(sort==='lowest') return a.rating - b.rating;
     return (b.helpful||0)-(a.helpful||0);
   });
 
   const sec = document.getElementById('reviewsSection');
 
-  if (!serverOnline) {
-    sec.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">⚠️</div>
-      <h3>Server Not Running</h3>
-      <p>The RentPlay backend server is not running. Please start the server with <code style="background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;font-family:monospace">node server.js</code> and refresh this page.</p>
-    </div>`;
-    return;
-  }
-
-  if(all.length===0){
+  if(all.length === 0){
     sec.innerHTML=`<div class="empty-state">
       <div class="empty-icon">📋</div>
       <h3>No reviews yet</h3>
@@ -377,18 +366,16 @@ function renderReviews(){
     return;
   }
 
-  if(list.length===0){
+  if(list.length === 0){
     sec.innerHTML=`<div class="reviews-grid"><div class="no-results">No reviews match this filter.</div></div>`;
     return;
   }
 
   const cards = list.map((r,i)=>{
-    const ts = new Date(r.created_at || r.timestamp || 0).getTime();
-    const isNew = Date.now()-ts < 120000;
-    let parsedTags = r.tags;
-    if (typeof parsedTags === 'string') parsedTags = parsedTags.split(',').map(x=>x.trim()).filter(x=>x);
-    const tagsHtml = (parsedTags||[]).length ? `<div class="review-tags">${parsedTags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : '';
-    return `<div class="review-card" data-rating="${r.rating}" style="animation-delay:${Math.min(i*0.04,0.3)}s">
+    const isNew = Date.now() - r.timestamp < 120000;
+    let parsedTags = Array.isArray(r.tags) ? r.tags : (r.tags||'').split(',').map(x=>x.trim()).filter(x=>x);
+    const tagsHtml = parsedTags.length ? `<div class="review-tags">${parsedTags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : '';
+    return `<div class="review-card" style="animation-delay:${Math.min(i*0.04,0.3)}s">
       <div class="card-top">
         <div class="user-info">
           <div class="avatar" style="background:${avatarColor(r.name)}">${esc(initials(r.name))}</div>
@@ -399,16 +386,16 @@ function renderReviews(){
         </div>
         ${isNew?'<span class="badge new-badge">✓ New</span>':''}
       </div>
-      <div class="star-display" style="align-items: center;">
-        ${starsHtml(r.rating)} 
-        <span style="margin-left: 6px; font-size: 0.85rem; color: var(--muted); font-weight: 500;">${r.rating}.0</span>
+      <div class="star-display" style="align-items:center;">
+        ${starsHtml(r.rating)}
+        <span style="margin-left:6px;font-size:0.85rem;color:var(--muted);font-weight:500;">${r.rating}.0</span>
       </div>
       <div class="review-title">${esc(r.title)}</div>
       <div class="review-body">${esc(r.body)}</div>
       ${tagsHtml}
       <div class="card-footer">
-        <span class="card-date">${fmtDate(ts)}</span>
-        <div class="helpful">Helpful? <button onclick="upvote(this,${r.id})"class="${r.voted?'voted':''}">👍 ${r.helpful||0}</button></div>
+        <span class="card-date">${fmtDate(r.timestamp)}</span>
+        <div class="helpful">Helpful? <button onclick="upvote(this,${r.id})" class="${r.voted?'voted':''}">👍 ${r.helpful||0}</button></div>
       </div>
     </div>`;
   }).join('');
@@ -416,142 +403,147 @@ function renderReviews(){
   sec.innerHTML=`<div class="reviews-grid">${cards}</div>`;
 }
 
-/* filter */
+/* ── filter ── */
 function setFilter(val,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  activeFilter=val;
+  activeFilter = val;
   renderReviews();
 }
 
-/* upvote */
-async function upvote(btn,id){
+/* ── upvote (persisted in localStorage) ── */
+function upvote(btn, id){
   if(btn.classList.contains('voted')) return;
+  const reviews = loadReviews();
+  const review = reviews.find(r => r.id === id);
+  if(!review) return;
+  review.helpful = (review.helpful || 0) + 1;
+  review.voted = true;
+  saveReviews(reviews);
   btn.classList.add('voted');
-  const review = cachedReviews.find(r => r.id === id);
-  if (review) review.helpful = (review.helpful || 0) + 1;
-  btn.textContent='👍 '+ (review ? review.helpful : '?');
-  if (review) review.voted = true;
-  try {
-     await fetch(`${apiBase}/api/reviews/${id}/upvote`, { method: 'POST' });
-  } catch (e) { console.error('Failed upvote', e); }
+  btn.textContent = '👍 ' + review.helpful;
 }
 
-/* modal */
-/* storage for user */
-const STORE_KEY = 'rentplay_account';
-function getAccount() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch(e) { return null; } }
-
-function openModal(){ 
-  resetForm(); 
-  document.getElementById('modal').classList.add('open'); 
-  document.body.style.overflow='hidden'; 
-  
-  // Auto-fill logged in user!
-  const acc = getAccount();
-  if (acc && acc.name) {
-    const fNameInput = document.getElementById('fName');
-    if (fNameInput) {
-       fNameInput.value = acc.name;
-       fNameInput.style.backgroundColor = 'var(--surface)';
-    }
-  }
+/* ── modal ── */
+function openModal(){
+  resetForm();
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-function closeModal(){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
-function overlayClick(e){ if(e.target===document.getElementById('modal')) closeModal(); }
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function overlayClick(e){
+  if(e.target === document.getElementById('modal')) closeModal();
+}
 
-/* star picker */
-const sp=document.getElementById('starPicker');
+/* ── star picker ── */
+const sp = document.getElementById('starPicker');
 sp.querySelectorAll('span').forEach(s=>{
-  s.addEventListener('mouseover',()=>lightStars(+s.dataset.v,true));
-  s.addEventListener('mouseout',()=>lightStars(rating,false));
-  s.addEventListener('click',()=>{ rating=+s.dataset.v; lightStars(rating,false); document.getElementById('rHint').textContent=HINTS[rating]; document.getElementById('rHint').style.color='var(--accent2)'; });
+  s.addEventListener('mouseover', ()=>lightStars(+s.dataset.v, true));
+  s.addEventListener('mouseout',  ()=>lightStars(rating, false));
+  s.addEventListener('click', ()=>{
+    rating = +s.dataset.v;
+    lightStars(rating, false);
+    document.getElementById('rHint').textContent = HINTS[rating];
+    document.getElementById('rHint').style.color = 'var(--accent2)';
+  });
 });
-function lightStars(n,h){
+function lightStars(n, h){
   sp.querySelectorAll('span').forEach(s=>{
-    const v=+s.dataset.v, on=v<=n;
-    s.classList.toggle('lit',on);
-    s.style.color=on?'var(--accent2)':'rgba(255,255,255,0.1)';
-    s.style.transform=on&&h?'scale(1.2)':'';
+    const v = +s.dataset.v, on = v <= n;
+    s.classList.toggle('lit', on);
+    s.style.color = on ? 'var(--accent2)' : 'rgba(255,255,255,0.1)';
+    s.style.transform = (on && h) ? 'scale(1.2)' : '';
   });
 }
 
-/* form */
+/* ── form ── */
 function resetForm(){
-  ['fName','fCity','fTitle','fBody','fTags','fItem'].forEach(id=>{ const el=document.getElementById(id); if(el){el.value='';el.classList.remove('err');} });
+  ['fName','fCity','fTitle','fBody','fTags','fItem'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.value=''; el.classList.remove('err'); }
+  });
   document.getElementById('fCategory').value='';
   document.getElementById('fCategory').classList.remove('err');
-  rating=0; lightStars(0,false);
-  document.getElementById('rHint').textContent='Click a star to rate';
-  document.getElementById('rHint').style.color='var(--muted)';
-  document.getElementById('subBtn').disabled=false;
-  document.getElementById('subBtn').textContent='Submit Review';
+  rating = 0;
+  lightStars(0, false);
+  document.getElementById('rHint').textContent = 'Click a star to rate';
+  document.getElementById('rHint').style.color = 'var(--muted)';
+  document.getElementById('subBtn').disabled = false;
+  document.getElementById('subBtn').textContent = 'Submit Review';
 }
 
 function validate(){
-  let ok=true;
-  [['fName'],['fCity'],['fTitle'],['fBody']].forEach(([id])=>{
-    const el=document.getElementById(id);
+  let ok = true;
+  ['fName','fCity','fTitle','fBody'].forEach(id=>{
+    const el = document.getElementById(id);
     if(!el.value.trim()){ el.classList.add('err'); ok=false; }
     else el.classList.remove('err');
   });
-  const cat=document.getElementById('fCategory');
+  const cat = document.getElementById('fCategory');
   if(!cat.value){ cat.classList.add('err'); ok=false; } else cat.classList.remove('err');
-  if(!rating){ document.getElementById('rHint').textContent='⚠ Please select a rating'; document.getElementById('rHint').style.color='var(--red)'; ok=false; }
+  if(!rating){
+    document.getElementById('rHint').textContent = '⚠ Please select a rating';
+    document.getElementById('rHint').style.color = 'var(--red)';
+    ok = false;
+  }
   return ok;
 }
 
-async function submitReview(){
+/* ── submit (saves to localStorage instantly, no server) ── */
+function submitReview(){
   if(!validate()) return;
-  const btn=document.getElementById('subBtn');
-  btn.disabled=true; btn.textContent='Submitting…';
+  const btn = document.getElementById('subBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
 
-  const rawTags=document.getElementById('fTags').value;
-  const item=document.getElementById('fItem').value.trim();
-  let tags=rawTags.split(',').map(t=>t.trim()).filter(t=>t.length>0&&t.length<50);
-  if(item) tags=[item,...tags];
-  tags=[...new Set(tags)].slice(0,5);
+  const rawTags = document.getElementById('fTags').value;
+  const item    = document.getElementById('fItem').value.trim();
+  let tags = rawTags.split(',').map(t=>t.trim()).filter(t=>t.length>0 && t.length<50);
+  if(item) tags = [item, ...tags];
+  tags = [...new Set(tags)].slice(0, 5);
 
-  const review={
-    name:document.getElementById('fName').value.trim(),
-    city:document.getElementById('fCity').value.trim(),
-    category:document.getElementById('fCategory').value,
-    title:document.getElementById('fTitle').value.trim(),
-    body:document.getElementById('fBody').value.trim(),
-    rating,tags
+  const reviews = loadReviews();
+
+  const newReview = {
+    id       : nextId(reviews),
+    name     : document.getElementById('fName').value.trim(),
+    city     : document.getElementById('fCity').value.trim(),
+    category : document.getElementById('fCategory').value,
+    title    : document.getElementById('fTitle').value.trim(),
+    body     : document.getElementById('fBody').value.trim(),
+    rating,
+    tags,
+    helpful  : 0,
+    voted    : false,
+    timestamp: Date.now()
   };
 
-  try {
-     await fetch(`${apiBase}/api/reviews`, {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(review)
-     });
-     await initApp();
-     closeModal();
-     toast('✓ Your review was posted successfully!');
-     const sec=document.getElementById('reviewsSection');
-     if(sec) window.scrollTo({top:sec.offsetTop-90,behavior:'smooth'});
-  } catch (e) {
-     toast('✗ Failed to post review');
-     btn.disabled=false;
-     btn.textContent='Submit Review';
-  }
+  reviews.unshift(newReview);   // newest first in storage
+  saveReviews(reviews);
+
+  updateStats();
+  renderReviews();
+  closeModal();
+  toast('✓ Your review was posted successfully!');
+
+  const sec = document.getElementById('reviewsSection');
+  if(sec) window.scrollTo({ top: sec.offsetTop - 90, behavior: 'smooth' });
 }
 
+/* ── toast ── */
 function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
 }
 
-/* init */
-async function initApp() {
-    await fetchReviews();
-    updateStats();
-    renderReviews();
-}
-initApp();
+/* ── init ── */
+updateStats();
+renderReviews();
 </script>
 </body>
 </html>
