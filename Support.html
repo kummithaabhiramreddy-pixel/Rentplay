@@ -1,1483 +1,529 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support – RentPlay</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;600&display=swap"
-    rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #f5f2eb;
-      --surface: #ede9df;
-      --card: #ffffff;
-      --border: #d8d3c7;
-      --accent: #e84040;
-      --accent2: #1a1a2e;
-      --text: #1a1a2e;
-      --muted: #7a7568;
-      --green: #2d6a4f;
-      --radius: 20px;
-      --radius-sm: 12px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    html {
-      scroll-behavior: smooth
-    }
-
-    body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(26, 26, 46, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 26, 46, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 48px;
-      background: rgba(245, 242, 235, 0.95);
-      backdrop-filter: blur(20px);
-      border-bottom: 2px solid var(--text);
-    }
-
-    .logo {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 1.5rem;
-      cursor: pointer;
-      letter-spacing: -0.02em;
-      color: var(--text)
-    }
-
-    .logo span {
-      color: var(--accent)
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 32px
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .2s;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      font-weight: 500
-    }
-
-    .nav-links a:hover {
-      color: var(--text)
-    }
-
-    .btn-nav {
-      padding: 10px 24px;
-      border-radius: 50px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 0.82rem;
-      cursor: pointer;
-      border: 2px solid var(--text);
-      background: var(--text);
-      color: var(--bg);
-      transition: all .2s;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .btn-nav:hover {
-      background: var(--accent);
-      border-color: var(--accent)
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      z-index: 1;
-      padding: 80px 48px 60px;
-      max-width: 1300px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      padding: 6px 14px;
-      border-radius: 4px;
-      margin-bottom: 24px;
-      text-transform: uppercase;
-    }
-
-    .hero-badge::before {
-      content: '●';
-      font-size: 0.6rem;
-      animation: blink 1.4s infinite
-    }
-
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: 0.2
-      }
-    }
-
-    h1 {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: clamp(2.8rem, 5vw, 4.5rem);
-      line-height: 1.0;
-      letter-spacing: -0.04em;
-      margin-bottom: 24px;
-    }
-
-    h1 em {
-      font-style: normal;
-      color: var(--accent);
-      position: relative;
-      display: inline-block
-    }
-
-    h1 em::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--accent);
-      border-radius: 2px
-    }
-
-    .hero-sub {
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.7;
-      max-width: 440px;
-      margin-bottom: 36px
-    }
-
-    .stat-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap
-    }
-
-    .stat-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 50px;
-      padding: 8px 16px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    .stat-pill .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green)
-    }
-
-    /* HERO VISUAL */
-    .hero-visual {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--accent2);
-      border-radius: var(--radius);
-      border: 2px solid var(--text);
-      padding: 40px;
-      min-height: 320px;
-      overflow: hidden;
-    }
-
-    .hero-visual::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.03) 10px, rgba(255, 255, 255, 0.03) 20px);
-    }
-
-    .phone-mock {
-      position: relative;
-      z-index: 1;
-      width: 150px;
-      background: #0d0d1a;
-      border-radius: 28px;
-      border: 3px solid rgba(255, 255, 255, 0.15);
-      padding: 18px 14px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .phone-notch {
-      width: 50px;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      margin: 0 auto 14px
-    }
-
-    .phone-to-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.55rem;
-      color: rgba(255, 255, 255, 0.35);
-      text-align: center;
-      margin-bottom: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase
-    }
-
-    .sms-bubble {
-      background: var(--accent);
-      border-radius: 14px 14px 14px 4px;
-      padding: 10px 12px;
-      font-size: 0.65rem;
-      color: #fff;
-      line-height: 1.4;
-      margin-bottom: 6px;
-      font-family: 'JetBrains Mono', monospace
-    }
-
-    .sms-bubble.out {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 14px 14px 4px 14px;
-      color: rgba(255, 255, 255, 0.75);
-      text-align: right
-    }
-
-    .sms-delivered {
-      font-size: 0.55rem;
-      color: rgba(255, 255, 255, 0.3);
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: 2px
-    }
-
-    .sms-time {
-      font-size: 0.55rem;
-      color: rgba(255, 255, 255, 0.3);
-      text-align: center;
-      margin-top: 10px;
-      font-family: 'JetBrains Mono', monospace
-    }
-
-    .ping-ring {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 2px solid var(--accent);
-      animation: pingRing 2s infinite
-    }
-
-    @keyframes pingRing {
-      0% {
-        transform: scale(1);
-        opacity: 1
-      }
-
-      100% {
-        transform: scale(2.5);
-        opacity: 0
-      }
-    }
-
-    .hero-label {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.3);
-      text-align: center;
-      letter-spacing: 0.06em;
-      text-transform: uppercase
-    }
-
-    /* AUTO BADGE */
-    .auto-badge {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: var(--green);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.58rem;
-      padding: 4px 10px;
-      border-radius: 4px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 600;
-      z-index: 2;
-    }
-
-    /* MAIN GRID */
-    .main-grid {
-      position: relative;
-      z-index: 1;
-      max-width: 1300px;
-      margin: 0 auto 100px;
-      padding: 0 48px;
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 40px;
-    }
-
-    .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-label::before {
-      content: '';
-      width: 24px;
-      height: 2px;
-      background: var(--accent)
-    }
-
-    .info-card {
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-      transition: all .3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .info-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 3px;
-      background: var(--accent);
-      transition: width .3s
-    }
-
-    .info-card:hover {
-      border-color: var(--text);
-      transform: translateX(6px)
-    }
-
-    .info-card:hover::before {
-      width: 100%
-    }
-
-    .info-card-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px
-    }
-
-    .info-icon-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem
-    }
-
-    .info-title {
-      font-weight: 700;
-      font-size: 0.95rem
-    }
-
-    .info-text {
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.6
-    }
-
-    .phone-tag {
-      display: inline-block;
-      margin-top: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      font-weight: 600;
-      background: var(--accent);
-      color: #fff;
-      padding: 4px 12px;
-      border-radius: 4px;
-      letter-spacing: 0.04em
-    }
-
-    .sms-highlight {
-      background: var(--accent2);
-      border-color: var(--accent2)
-    }
-
-    .sms-highlight .info-title {
-      color: #fff
-    }
-
-    .sms-highlight .info-text {
-      color: rgba(255, 255, 255, 0.6)
-    }
-
-    .sms-highlight .info-icon-box {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.15)
-    }
-
-    .sms-highlight:hover {
-      border-color: var(--accent)
-    }
-
-    /* HOW IT WORKS card */
-    .how-card {
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-
-    .how-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 14px
-    }
-
-    .how-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px
-    }
-
-    .how-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--accent2);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .how-text {
-      font-size: 0.84rem;
-      color: var(--muted);
-      line-height: 1.5
-    }
-
-    .how-text strong {
-      color: var(--text)
-    }
-
-    /* FORM BOX */
-    .form-box {
-      background: var(--card);
-      border: 2px solid var(--text);
-      border-radius: var(--radius);
-      overflow: hidden
-    }
-
-    .form-header {
-      background: var(--accent2);
-      padding: 28px 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .form-header-left .form-header-title {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 1.4rem;
-      color: #fff;
-      letter-spacing: -0.02em
-    }
-
-    .form-header-left .form-header-sub {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      color: rgba(255, 255, 255, 0.4);
-      margin-top: 4px;
-      letter-spacing: 0.06em
-    }
-
-    .form-header-right {
-      text-align: right
-    }
-
-    .auto-send-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--green);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 4px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .auto-send-badge::before {
-      content: '⚡';
-      font-size: 0.7rem
-    }
-
-    .dest-to {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 6px
-    }
-
-    /* SETUP NOTICE */
-    .setup-notice {
-      background: #fffbeb;
-      border: 2px solid #fcd34d;
-      border-radius: var(--radius-sm);
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: #92400e;
-    }
-
-    .setup-notice strong {
-      color: #78350f;
-      display: block;
-      margin-bottom: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase
-    }
-
-    .setup-notice code {
-      background: rgba(0, 0, 0, 0.08);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem
-    }
-
-    .form-body {
-      padding: 36px
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px
-    }
-
-    .form-group {
-      margin-bottom: 20px
-    }
-
-    .form-group label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 18px;
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: all .2s;
-    }
-
-    .form-group select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%237a7568' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 42px
-    }
-
-    .form-group select option {
-      background: #fff;
-      color: var(--text)
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      border-color: var(--text);
-      background: #fff;
-      box-shadow: 4px 4px 0 var(--text)
-    }
-
-    .form-group textarea {
-      height: 130px;
-      resize: none
-    }
-
-    /* PREVIEW */
-    .preview-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      display: inline-block;
-      animation: blink 1.4s infinite
-    }
-
-    .phone-preview {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 16px 18px;
-      margin-bottom: 24px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      line-height: 1.7;
-      min-height: 70px;
-      transition: all .3s;
-    }
-
-    .phone-preview.active {
-      border-color: var(--green);
-      background: #f0fff4;
-      color: var(--text)
-    }
-
-    /* SEND BUTTON */
-    .send-btn {
-      width: 100%;
-      padding: 20px 24px;
-      background: var(--accent2);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: all .25s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .send-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent);
-      transform: translateX(-101%);
-      transition: transform .35s ease
-    }
-
-    .send-btn:hover::after {
-      transform: translateX(0)
-    }
-
-    .send-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 0 rgba(26, 26, 46, 0.25)
-    }
-
-    .send-btn span,
-    .send-btn svg {
-      position: relative;
-      z-index: 1
-    }
-
-    .send-btn:active {
-      transform: translateY(0);
-      box-shadow: none
-    }
-
-    .send-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none
-    }
-
-    .send-btn:disabled::after {
-      display: none
-    }
-
-    .send-note {
-      margin-top: 14px;
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--muted);
-      line-height: 1.6
-    }
-
-    .send-note strong {
-      color: var(--text)
-    }
-
-    /* SPINNER */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2.5px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg)
-      }
-    }
-
-    /* SUCCESS VIEW */
-    #successView {
-      display: none;
-      padding: 50px 36px;
-      text-align: center
-    }
-
-    .success-ring {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: var(--accent2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 2.2rem;
-      color: #fff;
-      animation: popIn .5s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
-
-    @keyframes popIn {
-      from {
-        transform: scale(0);
-        opacity: 0
-      }
-
-      to {
-        transform: scale(1);
-        opacity: 1
-      }
-    }
-
-    .success-title {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 2rem;
-      letter-spacing: -0.03em;
-      margin-bottom: 10px
-    }
-
-    .success-sub {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.7;
-      margin-bottom: 24px;
-      max-width: 420px;
-      margin-left: auto;
-      margin-right: auto
-    }
-
-    /* RECEIPT */
-    .sms-receipt {
-      background: var(--accent2);
-      border-radius: var(--radius);
-      padding: 22px 26px;
-      text-align: left;
-      margin: 0 auto 28px;
-      max-width: 480px;
-    }
-
-    .receipt-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 14px;
-    }
-
-    .receipt-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: rgba(255, 255, 255, 0.4);
-      text-transform: uppercase;
-      letter-spacing: 0.1em
-    }
-
-    .receipt-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      color: #fff;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-top: 3px
-    }
-
-    .receipt-status {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      font-weight: 600;
-      background: #166534;
-      color: #bbf7d0;
-      padding: 4px 10px;
-      border-radius: 4px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .receipt-body {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.8
-    }
-
-    .action-row {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap
-    }
-
-    .reset-btn {
-      padding: 14px 28px;
-      background: transparent;
-      border: 2px solid var(--text);
-      border-radius: 50px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: all .2s
-    }
-
-    .reset-btn:hover {
-      background: var(--text);
-      color: var(--bg)
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(120px);
-      background: var(--text);
-      color: var(--bg);
-      border-radius: 50px;
-      padding: 14px 28px;
-      font-weight: 600;
-      font-size: 0.88rem;
-      z-index: 800;
-      transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
-      white-space: nowrap;
-      border: 2px solid var(--text);
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0)
-    }
-
-    .toast.err {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff
-    }
-
-    .toast.ok {
-      background: #166534;
-      border-color: #166534;
-      color: #fff
-    }
-
-    footer {
-      position: relative;
-      z-index: 1;
-      border-top: 2px solid var(--text);
-      padding: 28px 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.82rem;
-      background: var(--bg);
-    }
-
-    footer a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .2s
-    }
-
-    footer a:hover {
-      color: var(--text)
-    }
-
-    .fade-up {
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeUp .65s ease forwards
-    }
-
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    .delay-1 {
-      animation-delay: .1s
-    }
-
-    .delay-2 {
-      animation-delay: .2s
-    }
-
-    .delay-3 {
-      animation-delay: .3s
-    }
-
-    @media(max-width:900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding: 50px 24px 40px
-      }
-
-      .hero-visual {
-        display: none
-      }
-
-      .main-grid {
-        grid-template-columns: 1fr;
-        padding: 0 24px
-      }
-
-      nav {
-        padding: 14px 20px
-      }
-
-      .nav-links {
-        display: none
-      }
-
-      .form-row {
-        grid-template-columns: 1fr
-      }
-
-      footer {
-        flex-direction: column;
-        gap: 14px;
-        text-align: center
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentPlay Support Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #25D366; --green-dark: #128C7E; --green-light: #dcf8c6;
+    --accent: #FF6B35; --accent2: #1A73E8;
+    --bg: #f4f6fb; --card: #ffffff; --text: #1a1a2e; --muted: #6b7280;
+    --border: #e5e7eb; --shadow: 0 4px 24px rgba(0,0,0,0.08); --radius: 16px;
+    --purple: #7c3aed; --orange: #f59e0b; --teal: #0d9488;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); color: white; padding: 0; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(255,107,53,0.15); }
+  header::after { content: ''; position: absolute; bottom: -40px; left: 10%; width: 200px; height: 200px; border-radius: 50%; background: rgba(37,211,102,0.1); }
+  .header-inner { max-width: 1100px; margin: 0 auto; padding: 48px 24px 56px; position: relative; z-index: 1; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .logo-box { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, var(--accent), #ff9a3c); display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 22px; color: white; flex-shrink: 0; box-shadow: 0 8px 24px rgba(255,107,53,0.4); }
+  .header-text h1 { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+  .header-text p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-top: 4px; }
+  .badge { margin-left: auto; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 500; }
+
+  main { max-width: 1100px; margin: -28px auto 0; padding: 0 24px 80px; position: relative; z-index: 2; }
+
+  .contact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .contact-card { background: var(--card); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text); transition: transform 0.2s, box-shadow 0.2s; border: 1.5px solid transparent; }
+  .contact-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+  .contact-card.email:hover { border-color: var(--accent2); }
+  .contact-card.phone:hover, .contact-card.whatsapp:hover { border-color: var(--green); }
+  .contact-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .email .contact-icon { background: #e8f0fe; }
+  .phone .contact-icon, .whatsapp .contact-icon { background: #e8f8ef; }
+  .contact-info label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 500; }
+  .contact-info p { font-weight: 600; font-size: 14px; margin-top: 2px; font-family: 'Poppins', sans-serif; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 32px; }
+  .stat-card { background: var(--card); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); text-align: center; }
+  .stat-num { font-family: 'Poppins', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+
+  .guide-card { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); margin-bottom: 28px; }
+  .guide-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .gtab { padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted); transition: all 0.15s; font-family: 'Inter', sans-serif; }
+  .gtab.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .guide-content { display: none; }
+  .guide-content.active { display: block; }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 13px; }
+  .step-box { background: var(--bg); border-radius: 12px; padding: 16px; border: 1px solid var(--border); }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .step-num.blue { background: var(--accent2); }
+  .step-num.green { background: var(--teal); }
+  .step-icon { font-size: 20px; margin-bottom: 6px; }
+  .step-box h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; font-family: 'Poppins', sans-serif; }
+  .step-box p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .guide-note { margin-top: 16px; padding: 12px 16px; background: #fff8f0; border-left: 4px solid var(--accent); border-radius: 8px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .guide-note.blue { background: #eff6ff; border-color: var(--accent2); color: #1e40af; }
+  .guide-note.teal { background: #f0fdfa; border-color: var(--teal); color: #134e4a; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-bottom: 28px; }
+  @media(max-width:768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .header-text h1 { font-size: 1.5rem; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .d-grid { grid-template-columns: 1fr !important; }
+  }
+
+  .wa-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+  .wa-header { background: var(--green-dark); padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+  .wa-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .wa-header-info h3 { color: white; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; }
+  .wa-header-info p { color: rgba(255,255,255,0.75); font-size: 11px; }
+  .wa-status { margin-left: auto; display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.8); font-size: 11px; }
+  .wa-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #7ee787; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+  .wa-messages { flex: 1; padding: 14px; overflow-y: auto; background: #e5ddd5; display: flex; flex-direction: column; gap: 10px; min-height: 260px; max-height: 320px; }
+  .wa-msg { max-width: 82%; padding: 10px 13px; border-radius: 12px; font-size: 13px; line-height: 1.55; position: relative; word-break: break-word; }
+  .wa-msg.bot { background: white; align-self: flex-start; border-top-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .wa-msg.user { background: var(--green-light); align-self: flex-end; border-top-right-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .wa-msg .time { font-size: 10px; color: #888; margin-top: 4px; text-align: right; }
+  .wa-msg.bot .time { text-align: left; }
+  .wa-typing { display: none; align-self: flex-start; background: white; padding: 10px 14px; border-radius: 12px; border-top-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .dots span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); margin: 0 2px; animation: bounce 1.2s infinite; }
+  .dots span:nth-child(2){animation-delay:0.2s}.dots span:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+  .quick-btns { padding: 10px 12px 6px; display: flex; flex-wrap: wrap; gap: 7px; background: #e5ddd5; }
+  .quick-btn { background: white; border: 1.5px solid var(--green); color: var(--green-dark); border-radius: 100px; padding: 5px 11px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+  .quick-btn:hover { background: var(--green); color: white; }
+  .wa-input-area { padding: 10px 12px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; border-top: 1px solid var(--border); }
+  .wa-input { flex: 1; padding: 9px 14px; border-radius: 24px; border: none; background: white; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .wa-send { width: 38px; height: 38px; border-radius: 50%; background: var(--green); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: background 0.2s; flex-shrink: 0; }
+  .wa-send:hover { background: var(--green-dark); }
+  .wa-open-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: white; font-weight: 600; font-size: 13px; padding: 10px 20px; border-radius: 100px; text-decoration: none; margin-top: 14px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
+  .wa-open-btn:hover { background: var(--green-dark); }
+
+  .info-box { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); margin-bottom: 18px; }
+  .hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .hour-row { font-size: 13px; display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 8px; background: var(--bg); }
+  .hour-row strong { color: var(--text); }
+  .hour-row span { color: var(--muted); }
+
+  .delivery-banner { background: linear-gradient(135deg, #0f3460, #16213e); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); color: white; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .delivery-banner::after { content: '🛵'; position: absolute; right: 18px; top: 14px; font-size: 52px; opacity: 0.15; }
+  .delivery-banner h3 { font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .delivery-banner p { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 14px; }
+  .dbadges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dbadge { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; font-size: 12px; }
+
+  .faq-card { background: var(--card); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+  .faq-filter { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ffilter { padding: 5px 13px; border-radius: 100px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .ffilter.active { background: var(--text); color: white; border-color: var(--text); }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 13px 0; cursor: pointer; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q { font-weight: 600; font-size: 13px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; color: var(--text); }
+  .faq-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .faq-tag { font-size: 10px; padding: 2px 7px; border-radius: 100px; font-weight: 500; }
+  .tag-booking { background: #fef3c7; color: #92400e; }
+  .tag-account { background: #ede9fe; color: #5b21b6; }
+  .tag-payment { background: #d1fae5; color: #065f46; }
+  .tag-delivery { background: #dbeafe; color: #1e40af; }
+  .tag-general { background: #f3f4f6; color: #374151; }
+  .arrow { font-size: 11px; color: var(--muted); transition: transform 0.2s; }
+  .faq-a { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 10px; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .arrow { transform: rotate(180deg); }
+
+  footer { text-align: center; padding: 24px; background: #1a1a2e; color: rgba(255,255,255,0.5); font-size: 13px; }
+  footer strong { color: rgba(255,255,255,0.8); }
+</style>
 </head>
-
 <body>
 
-  <nav>
-    <div class="logo" onclick="window.location.href='index.html'">Rent<span>Play</span></div>
-  </nav>
-
-  <section class="hero">
-    <div class="fade-up">
-      <div class="hero-badge">Auto SMS Support</div>
-      <h1>Got a<br>question?<br><em>We're here.</em></h1>
-      <p class="hero-sub">Fill the form and click Send — your message is delivered <strong>automatically</strong> to our
-        support team. No app opens, no extra steps needed.</p>
-      <div class="stat-row">
-        <div class="stat-pill"><span class="dot"></span> Avg. reply in 8 min</div>
-        <div class="stat-pill"><span class="dot" style="background:var(--accent)"></span> Auto-Send Active</div>
-      </div>
+<header>
+  <div class="header-inner">
+    <div class="logo-box">RP</div>
+    <div class="header-text">
+      <h1>RentPlay Support Center</h1>
+      <p>24/7 AI-powered help — rentals, delivery, accounts & more</p>
     </div>
-    <div class="hero-visual fade-up delay-2">
-      <div class="auto-badge">⚡ Auto Send</div>
-      <div class="ping-ring"></div>
-      <div class="phone-mock">
-        <div class="phone-notch"></div>
-        <div class="phone-to-tag">To: +91 8185951564</div>
-        <div class="sms-bubble">Rental issue — order #2891</div>
-        <div class="sms-bubble out">On it! Calling in 5 min.</div>
-        <div class="sms-delivered">✓✓ Delivered automatically</div>
-        <div class="sms-time">RentPlay Support · Just now</div>
-      </div>
-      <div class="hero-label">Click Send → SMS Auto-Delivered</div>
-    </div>
-  </section>
+    <div class="badge">🟢 AI Online Now</div>
+  </div>
+</header>
 
-  <div class="main-grid">
+<main>
 
-    <aside class="sidebar fade-up delay-1">
-      <div class="section-label">Contact Info</div>
-
-      <div class="info-card">
-        <div class="info-card-top">
-          <div class="info-icon-box">📧</div>
-          <div class="info-title">Email Us</div>
-        </div>
-        <p class="info-text">support@rentplay.com<br>Response within 2 hours</p>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-top">
-          <div class="info-icon-box">📞</div>
-          <div class="info-title">Call Us</div>
-        </div>
-        <p class="info-text">Mon–Sat, 9AM – 4PM IST</p>
-        <div class="phone-tag">+91 8185951564</div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-top">
-          <div class="info-icon-box">📍</div>
-          <div class="info-title">Office</div>
-        </div>
-        <p class="info-text"> City<br>Bhimavaram, Andhra Pradesh 534208</p>
-      </div>
-
-      <div class="info-card sms-highlight">
-        <div class="info-card-top">
-          <div class="info-icon-box">⚡</div>
-          <div class="info-title">Auto SMS Delivery</div>
-        </div>
-        <p class="info-text">Click Send → our server instantly delivers your message to <strong style="color:#fff">+91
-            8185951564</strong>. No app, no extra tap needed.</p>
-      </div>
-
-      <div class="how-card">
-        <div class="how-title">How It Works</div>
-        <div class="how-step">
-          <div class="how-num">1</div>
-          <div class="how-text"><strong>Fill</strong> your name, email & message</div>
-        </div>
-        <div class="how-step">
-          <div class="how-num">2</div>
-          <div class="how-text"><strong>Click</strong> the Send button once</div>
-        </div>
-        <div class="how-step">
-          <div class="how-num">3</div>
-          <div class="how-text"><strong>SMS auto-delivers</strong> to RentPlay instantly via our server</div>
-        </div>
-        <div class="how-step" style="margin-bottom:0">
-          <div class="how-num">4</div>
-          <div class="how-text"><strong>We call/text you back</strong> within minutes</div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="form-box fade-up delay-3">
-      <div class="form-header">
-        <div class="form-header-left">
-          <div class="form-header-title">Send us a Message</div>
-          <div class="form-header-sub">AUTO-DELIVERED TO → +91 8185951564</div>
-        </div>
-        <div class="form-header-right">
-          <div class="auto-send-badge">Auto Send</div>
-          <div class="dest-to">via Fast2SMS API</div>
-        </div>
-      </div>
-
-      <div class="form-body">
-        <div id="formView">
-
-          <!--
-        ╔══════════════════════════════════════════════════════════════╗
-        ║  DEVELOPER SETUP — READ BEFORE DEPLOYING                    ║
-        ║                                                              ║
-        ║  This page uses Fast2SMS API to auto-send SMS.              ║
-        ║  Steps to activate:                                          ║
-        ║                                                              ║
-        ║  1. Sign up FREE at https://www.fast2sms.com                ║
-        ║  2. Copy your API key from Dashboard → Dev API              ║
-        ║  3. Replace YOUR_FAST2SMS_API_KEY below in the JS           ║
-        ║  4. Fast2SMS free plan: 200 SMS/month free                   ║
-        ║                                                              ║
-        ║  Alternative APIs: msg91.com · textlocal.in · twilio.com    ║
-        ╚══════════════════════════════════════════════════════════════╝
-        -->
-
-          <div class="setup-notice">
-            <strong>⚙ Developer Note</strong>
-            Replace <code>YOUR_FAST2SMS_API_KEY</code> in the script below with your
-            <a href="https://www.fast2sms.com" target="_blank" style="color:#92400e;font-weight:600">Fast2SMS</a> API
-            key to activate auto-send.
-            Free plan gives 200 SMS/month. No credit card needed.
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" id="name" placeholder="John Doe" oninput="updatePreview()" />
-            </div>
-            <div class="form-group">
-              <label>Phone Number</label>
-              <input type="tel" id="userPhone" placeholder="9876543210" oninput="updatePreview()" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="email" placeholder="ram@gmail.com" oninput="updatePreview()" />
-          </div>
-
-          <div class="form-group">
-            <label>Subject</label>
-            <select id="subject" onchange="updatePreview()">
-              <option value="General Inquiry">General Inquiry</option>
-              <option value="Rental Issue">Rental Issue</option>
-              <option value="Delivery Problem">Delivery Problem</option>
-              <option value="Payment Question">Payment Question</option>
-              <option value="Partnership">Partnership</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Message</label>
-            <textarea id="message" placeholder="Describe your issue or question in detail..."
-              oninput="updatePreview()"></textarea>
-          </div>
-
-          <div class="preview-label"><span class="live-dot"></span> SMS Preview (what RentPlay receives)</div>
-          <div class="phone-preview" id="preview">Start typing above to preview the SMS...</div>
-
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-            <span>SEND MESSAGE TO RENTPLAY</span>
-          </button>
-
-          <p class="send-note">
-            ⚡ Message is <strong>automatically delivered</strong> to +91 8185951564 — no extra steps.<br>
-            Our team will call or text you back within minutes.
-          </p>
-        </div>
-
-        <!-- SUCCESS VIEW -->
-        <div id="successView">
-          <div class="success-ring">✓</div>
-          <div class="success-title">Message Sent!</div>
-          <p class="success-sub">Your message was automatically delivered to RentPlay support. Our team will contact you
-            shortly.</p>
-
-          <div class="sms-receipt">
-            <div class="receipt-header">
-              <div>
-                <div class="receipt-label">Delivered To</div>
-                <div class="receipt-num">+91 8185951564</div>
-              </div>
-              <div class="receipt-status">✓ SENT</div>
-            </div>
-            <div class="receipt-body" id="receiptBody"></div>
-          </div>
-
-          <div class="action-row">
-            <button class="reset-btn" onclick="resetForm()">↩ Send Another Message</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
+  <div class="contact-strip">
+    <a class="contact-card email" href="mailto:rentplay199@gmail.com">
+      <div class="contact-icon">📧</div>
+      <div class="contact-info"><label>Email Support</label><p>rentplay199@gmail.com</p></div>
+    </a>
+    <a class="contact-card phone" href="tel:+918185951564">
+      <div class="contact-icon">📞</div>
+      <div class="contact-info"><label>Phone Support</label><p>+91 81859 51564</p></div>
+    </a>
+    <a class="contact-card whatsapp" href="https://wa.me/918185951564" target="_blank">
+      <div class="contact-icon">💬</div>
+      <div class="contact-info"><label>WhatsApp Chat</label><p>+91 81859 51564</p></div>
+    </a>
   </div>
 
-  <footer>
-    <div class="logo" style="font-size:1.1rem">Rent<span>Play</span></div>
-    <div>© 2026 RentPlay · Rent smart, play more.</div>
-    <div style="display:flex;gap:20px">
-      <a href="#">Terms</a>
-      <a href="#">Privacy</a>
-      <a href="Support.html" style="color:var(--text);font-weight:600">Support</a>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">24/7</div><div class="stat-label">AI Support Available</div></div>
+    <div class="stat-card"><div class="stat-num">5–7</div><div class="stat-label">Days Refund Processing</div></div>
+    <div class="stat-card"><div class="stat-num">48h</div><div class="stat-label">Free Cancellation Window</div></div>
+    <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Secure Payments</div></div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section-title"><span>📖</span> How RentPlay Works</div>
+  <div class="guide-card">
+    <div class="guide-tabs">
+      <button class="gtab active" onclick="switchTab('how-website', this)">🌐 How to Use Website</button>
+      <button class="gtab" onclick="switchTab('how-book', this)">📦 How to Book an Item</button>
+      <button class="gtab" onclick="switchTab('how-delivery', this)">🛵 Delivery Partner Registration</button>
     </div>
-  </footer>
 
-  <div class="toast" id="toast"></div>
+    <!-- TAB 1 -->
+    <div class="guide-content active" id="how-website">
+      <div class="steps-grid">
+        <div class="step-box"><div class="step-num">1</div><div class="step-icon">🌐</div><h4>Open Website</h4><p>Visit the RentPlay website on your browser. The homepage loads automatically.</p></div>
+        <div class="step-box"><div class="step-num">2</div><div class="step-icon">👤</div><h4>Create Account</h4><p>New user? Click <strong>Sign Up</strong> and fill in your name, phone number, and email to register.</p></div>
+        <div class="step-box"><div class="step-num">3</div><div class="step-icon">🔐</div><h4>Sign In</h4><p>Already registered? Click <strong>Sign In</strong> and enter your email and password.</p></div>
+        <div class="step-box"><div class="step-num">4</div><div class="step-icon">🏠</div><h4>Rent Items Page</h4><p>After signing in, you are <strong>automatically taken</strong> to the Rent Items page with all available products.</p></div>
+        <div class="step-box"><div class="step-num">5</div><div class="step-icon">🔍</div><h4>Search Item</h4><p>Use the search bar to find the product you need. Filter by category or availability.</p></div>
+        <div class="step-box"><div class="step-num">6</div><div class="step-icon">🛒</div><h4>Click Book Now</h4><p>Found your item? Click the <strong>Book Now</strong> button on the product card to start the booking process.</p></div>
+      </div>
+      <div class="guide-note">💡 <strong>Note:</strong> You must create an account before renting anything. Sign Up takes less than 2 minutes — you'll need your name, phone number, and a valid email address.</div>
+    </div>
 
-  <script>
-    // ═══════════════════════════════════════════════════════════
-    //  CONFIG — Replace with your actual API key
-    // ═══════════════════════════════════════════════════════════
-    const FAST2SMS_API_KEY = 'mx1fN5ilyRIOz1pZAQwn8UiVQZgx0wstNQ3LoQmf3xOYcLQWcdh03dU97anH'; // ← paste here
-    const RENTPLAY_PHONE = '8185951564';             // without +91
-    // ═══════════════════════════════════════════════════════════
+    <!-- TAB 2 -->
+    <div class="guide-content" id="how-book">
+      <div class="steps-grid">
+        <div class="step-box"><div class="step-num blue">1</div><div class="step-icon">🛒</div><h4>Click Book Now</h4><p>On the product listing, click the <strong>Book Now</strong> button to start your booking.</p></div>
+        <div class="step-box"><div class="step-num blue">2</div><div class="step-icon">📄</div><h4>Agreement Sheet</h4><p>A <strong>Rental Agreement Sheet</strong> is displayed. Read all terms carefully before proceeding.</p></div>
+        <div class="step-box"><div class="step-num blue">3</div><div class="step-icon">✍️</div><h4>Type Your Signature</h4><p>Type your <strong>full name</strong> in the signature field as your digital consent. This step is mandatory.</p></div>
+        <div class="step-box"><div class="step-num blue">4</div><div class="step-icon">📋</div><h4>Booking Form Opens</h4><p>After signing, the <strong>Booking Form opens automatically</strong> — no need to navigate anywhere.</p></div>
+        <div class="step-box"><div class="step-num blue">5</div><div class="step-icon">📝</div><h4>Fill All Details</h4><p>Enter your delivery address, rental start/end dates, phone number, and any special notes.</p></div>
+        <div class="step-box"><div class="step-num blue">6</div><div class="step-icon">✅</div><h4>Submit &amp; Confirm</h4><p>Click <strong>Book Now</strong> on the booking form. Instant confirmation is sent on WhatsApp!</p></div>
+      </div>
+      <div class="guide-note blue">📄 <strong>Important:</strong> The Agreement Sheet must be signed (by typing your name) before the Booking Form appears. You cannot skip this step — it confirms your acceptance of RentPlay's rental terms and damage policy.</div>
+    </div>
 
-    let lastSMSText = '';
+    <!-- TAB 3 -->
+    <div class="guide-content" id="how-delivery">
+      <div class="d-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+        <div>
+          <p style="font-size:13.5px; color:var(--muted); line-height:1.7; margin-bottom:18px;">Want to become a <strong style="color:var(--text)">RentPlay Delivery Partner</strong>? Register through our website and start earning by delivering rental items in your area. The process takes only a few minutes!</p>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:26px; height:26px; border-radius:50%; background:var(--teal); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">1</div>
+              <p style="font-size:13.5px; color:var(--text);">Open the <strong>RentPlay website homepage</strong> in your browser.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:26px; height:26px; border-radius:50%; background:var(--teal); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">2</div>
+              <p style="font-size:13.5px; color:var(--text);">Click the <strong>☰ three-line (hamburger) menu</strong> icon at the top of the homepage.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:26px; height:26px; border-radius:50%; background:var(--teal); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">3</div>
+              <p style="font-size:13.5px; color:var(--text);">Select <strong>"Register Form"</strong> or <strong>"Delivery Partner Registration"</strong> from the menu.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:26px; height:26px; border-radius:50%; background:var(--teal); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">4</div>
+              <p style="font-size:13.5px; color:var(--text);">You will see <strong>4 forms</strong> to fill in. Complete and submit <strong>all 4 forms</strong> with accurate information.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:26px; height:26px; border-radius:50%; background:var(--teal); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">5</div>
+              <p style="font-size:13.5px; color:var(--text);">After submitting, our team <strong>reviews your application</strong> and contacts you to add you as a Delivery Partner.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--bg); border-radius:12px; padding:20px; border:1.5px dashed var(--teal); margin-bottom:14px;">
+            <div style="font-size:13px; font-weight:600; color:var(--teal); margin-bottom:14px; font-family:'Poppins',sans-serif;">📋 What the 4 Forms Cover</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="background:#ccfbf1; color:var(--teal); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; flex-shrink:0;">Form 1</span>
+                <p style="font-size:13px; color:var(--muted);">Personal Details — Full name, age, phone number, home address</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="background:#ccfbf1; color:var(--teal); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; flex-shrink:0;">Form 2</span>
+                <p style="font-size:13px; color:var(--muted);">Vehicle Details — Vehicle type, registration number, driving license</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="background:#ccfbf1; color:var(--teal); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; flex-shrink:0;">Form 3</span>
+                <p style="font-size:13px; color:var(--muted);">Bank / Payment Details — For receiving your delivery earnings directly</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="background:#ccfbf1; color:var(--teal); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; flex-shrink:0;">Form 4</span>
+                <p style="font-size:13px; color:var(--muted);">Availability &amp; Area — Your working hours and preferred delivery zone</p>
+              </div>
+            </div>
+          </div>
+          <div class="guide-note teal">⚡ <strong>Response Time:</strong> After submitting all 4 forms, our team will contact you on <strong>WhatsApp (+91 81859 51564)</strong> within 24–48 hours to confirm your onboarding as a Delivery Partner.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    function buildSMSText() {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('userPhone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const subject = document.getElementById('subject').value;
-      const message = document.getElementById('message').value.trim();
-      return (
-        `[RentPlay Support]\n` +
-        `Name: ${name}\n` +
-        `Phone: ${phone}\n` +
-        `Email: ${email}\n` +
-        `Subject: ${subject}\n` +
-        `Message: ${message}`
-      );
-    }
+  <!-- AI CHAT + RIGHT -->
+  <div class="grid-2">
+    <div>
+      <div class="section-title"><span>💬</span> WhatsApp AI Assistant</div>
+      <div class="wa-card">
+        <div class="wa-header">
+          <div class="wa-avatar">🎮</div>
+          <div class="wa-header-info"><h3>RentPlay Support</h3><p>+91 81859 51564</p></div>
+          <div class="wa-status"><div class="wa-status-dot"></div><span>AI Active</span></div>
+        </div>
+        <div class="wa-messages" id="waMessages">
+          <div class="wa-msg bot">
+            👋 Hi! Welcome to <strong>RentPlay Support</strong>!<br><br>
+            I'm your AI assistant. Ask me anything:<br>
+            🌐 How to use the website<br>
+            📦 How to book a rental item<br>
+            🛵 Delivery partner registration<br>
+            💳 Payments, returns &amp; more!
+            <div class="time">RentPlay · Just now</div>
+          </div>
+        </div>
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="sendQuick('How does the RentPlay website work?')">How website works?</button>
+          <button class="quick-btn" onclick="sendQuick('How do I book an item step by step?')">How to book?</button>
+          <button class="quick-btn" onclick="sendQuick('How do I register as a delivery partner?')">Delivery partner</button>
+          <button class="quick-btn" onclick="sendQuick('What is your return policy?')">Return policy</button>
+          <button class="quick-btn" onclick="sendQuick('What payment methods are accepted?')">Payments</button>
+          <button class="quick-btn" onclick="sendQuick('How do I cancel my rental?')">Cancel booking</button>
+        </div>
+        <div class="wa-typing" id="waTyping"><div class="dots"><span></span><span></span><span></span></div></div>
+        <div class="wa-input-area">
+          <input class="wa-input" id="waInput" placeholder="Ask anything about RentPlay..." onkeydown="if(event.key==='Enter') sendMsg()"/>
+          <button class="wa-send" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:14px;">
+        <a class="wa-open-btn" href="https://wa.me/918185951564" target="_blank">💬 Open in WhatsApp</a>
+      </div>
+    </div>
 
-    function updatePreview() {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('userPhone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const subject = document.getElementById('subject').value;
-      const message = document.getElementById('message').value.trim();
-      const preview = document.getElementById('preview');
+    <div>
+      <div class="section-title"><span>🕐</span> Support Hours</div>
+      <div class="info-box">
+        <p style="color:var(--muted); font-size:13px; line-height:1.65;">AI assistant available <strong style="color:var(--text)">24/7</strong>. Human agents work:</p>
+        <div class="hours-grid">
+          <div class="hour-row"><strong>Mon – Fri</strong><span>9 AM – 8 PM</span></div>
+          <div class="hour-row"><strong>Saturday</strong><span>10 AM – 6 PM</span></div>
+          <div class="hour-row"><strong>Sunday</strong><span>11 AM – 4 PM</span></div>
+          <div class="hour-row"><strong>Holidays</strong><span>AI Only</span></div>
+        </div>
+      </div>
 
-      if (!name && !email && !message && !phone) {
-        preview.textContent = 'Start typing above to preview the SMS...';
-        preview.classList.remove('active');
-        return;
-      }
-      preview.classList.add('active');
-      const lines = [
-        '[RentPlay Support]',
-        name ? `Name: ${name}` : null,
-        phone ? `Phone: ${phone}` : null,
-        email ? `Email: ${email}` : null,
-        `Subject: ${subject}`,
-        message ? `Message: ${message}` : null,
-      ].filter(Boolean);
-      preview.innerHTML = lines.join('<br>');
-    }
+      <div class="delivery-banner">
+        <h3>🛵 Become a Delivery Partner</h3>
+        <p>Earn money delivering rental items near you. Register via the ☰ menu on our homepage — just fill in 4 quick forms!</p>
+        <div class="dbadges">
+          <div class="dbadge">✅ Flexible Hours</div>
+          <div class="dbadge">✅ Weekly Payouts</div>
+          <div class="dbadge">✅ Easy Sign-up</div>
+        </div>
+      </div>
 
-    function validate() {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('userPhone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const msg = document.getElementById('message').value.trim();
-      if (!name) { showToast('❌ Please enter your name.', 'err'); return false; }
-      if (!phone || phone.length < 10) { showToast('❌ Please enter a valid 10-digit phone number.', 'err'); return false; }
-      if (!email || !validEmail(email)) { showToast('❌ Please enter a valid email.', 'err'); return false; }
-      if (!msg) { showToast('❌ Please write a message.', 'err'); return false; }
-      return true;
-    }
+      <div class="section-title"><span>❓</span> Most Common Issues</div>
+      <div class="faq-card">
+        <div class="faq-filter">
+          <button class="ffilter active" onclick="filterFaq('all',this)">All</button>
+          <button class="ffilter" onclick="filterFaq('account',this)">Account</button>
+          <button class="ffilter" onclick="filterFaq('booking',this)">Booking</button>
+          <button class="ffilter" onclick="filterFaq('payment',this)">Payment</button>
+          <button class="ffilter" onclick="filterFaq('delivery',this)">Delivery</button>
+        </div>
 
-    async function sendMessage() {
-      if (!validate()) return;
+        <div class="faq-item" data-cat="account" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>I cannot create an account — what do I do?</span><span class="faq-meta"><span class="faq-tag tag-account">Account</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Make sure your email is valid and not already registered. Try clearing your browser cache or use a different browser. If the problem persists, contact us on WhatsApp: +91 81859 51564 or email: rentplay199@gmail.com.</div>
+        </div>
 
-      const smsText = buildSMSText();
-      lastSMSText = smsText;
+        <div class="faq-item" data-cat="account" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>I forgot my password — how do I reset it?</span><span class="faq-meta"><span class="faq-tag tag-account">Account</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Click "Forgot Password" on the Sign In page. Enter your registered email and you'll receive a reset link. Check spam/junk if it doesn't arrive within 2 minutes.</div>
+        </div>
 
-      const btn = document.getElementById('sendBtn');
-      btn.disabled = true;
-      btn.innerHTML = `<div class="spinner"></div><span>SENDING...</span>`;
+        <div class="faq-item" data-cat="booking" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>The agreement sheet is not loading or I cannot sign it</span><span class="faq-meta"><span class="faq-tag tag-booking">Booking</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Refresh the page and try again. Make sure JavaScript is enabled in your browser. You must type your full name in the signature field — it cannot be left blank. If it still fails, try a different browser or contact support.</div>
+        </div>
 
-      const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('userPhone').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        subject: document.getElementById('subject').value,
-        message: document.getElementById('message').value.trim()
-      };
+        <div class="faq-item" data-cat="booking" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>The booking form doesn't appear after I sign the agreement</span><span class="faq-meta"><span class="faq-tag tag-booking">Booking</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Ensure you've correctly typed your full name in the signature box and clicked "Agree &amp; Continue." The booking form opens automatically after a valid signature. If nothing happens, refresh the page or clear your browser cache.</div>
+        </div>
 
-      try {
-        // Determine API URL (handle dev environments where frontend/backend might be on different ports)
-        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-          ? `http://localhost:3000/api/support`
-          : '/api/support';
+        <div class="faq-item" data-cat="booking" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Can I extend my rental period after booking?</span><span class="faq-meta"><span class="faq-tag tag-booking">Booking</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Yes! WhatsApp us at +91 81859 51564 at least 24 hours before your rental ends. Extensions depend on availability and are billed at the same daily rate.</div>
+        </div>
 
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
+        <div class="faq-item" data-cat="booking" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How do I cancel a rental booking?</span><span class="faq-meta"><span class="faq-tag tag-booking">Booking</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">48+ hours before pickup = full refund. 24–48 hours = 10% fee. Under 24 hours = 20% fee. Contact us via WhatsApp or email rentplay199@gmail.com to cancel.</div>
+        </div>
 
-        const result = await response.json();
+        <div class="faq-item" data-cat="booking" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What happens if a rented item gets damaged?</span><span class="faq-meta"><span class="faq-tag tag-booking">Booking</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Normal wear and tear is fine. For significant damage, a repair/replacement fee applies as per the rental agreement you signed. Always contact us immediately if something breaks during your rental period.</div>
+        </div>
 
-        if (result.success) {
-          if (result.smsSuccess) {
-            showSuccess(smsText);
-            showToast('✅ Message sent and SMS delivered!', 'ok');
-          } else if (result.smsError && result.smsError.includes('transaction of 100 INR')) {
-            showToast('⚠ Fast2SMS requires a 100 INR recharge to send API messages.', 'err');
-            if (confirm("Fast2SMS API is restricted (requires 100 INR recharge). Would you like to open your phone's SMS app to send this manually?")) {
-              fallbackToSMSApp(smsText);
-            }
-          } else {
-            showToast(`⚠ Message saved, but SMS failed: ${result.smsError || 'Unknown Error'}`, 'err');
-            if (confirm("SMS delivery failed. Open SMS app to send manually?")) {
-              fallbackToSMSApp(smsText);
-            }
-          }
-        } else {
-          showToast(`❌ Failed: ${result.error || 'Server Error'}`, 'err');
-        }
-      } catch (err) {
-        console.error('API Error:', err);
-        showToast('❌ Network error. Make sure your server (server.js) is running on port 3000.', 'err');
-      } finally {
-        resetBtn(btn);
-      }
-    }
+        <div class="faq-item" data-cat="payment" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>My payment failed but money was deducted</span><span class="faq-meta"><span class="faq-tag tag-payment">Payment</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">The amount will be auto-refunded within 5–7 business days. Share your transaction ID with us on WhatsApp (+91 81859 51564) for faster resolution.</div>
+        </div>
 
-    function fallbackToSMSApp(smsText) {
-      // If API fails, open SMS app as fallback
-      const ua = navigator.userAgent || '';
-      const isIOS = /iPhone|iPad|iPod/i.test(ua);
-      const encoded = encodeURIComponent(smsText);
-      const smsURL = isIOS
-        ? `sms:${RENTPLAY_PHONE}&body=${encoded}`
-        : `sms:${RENTPLAY_PHONE}?body=${encoded}`;
-      window.location.href = smsURL;
-      setTimeout(() => {
-        showSuccess(smsText);
-        showToast('⚠ API unavailable — SMS app opened as backup.', 'err');
-      }, 700);
-    }
+        <div class="faq-item" data-cat="payment" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What payment methods are accepted?</span><span class="faq-meta"><span class="faq-tag tag-payment">Payment</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">UPI (GPay, PhonePe, Paytm), Debit &amp; Credit Cards, Net Banking, and Cash on Delivery for select areas. All online payments are 100% secure.</div>
+        </div>
 
-    function showSuccess(smsText) {
-      document.getElementById('formView').style.display = 'none';
-      const sv = document.getElementById('successView');
-      sv.style.display = 'block';
-      document.getElementById('receiptBody').innerHTML =
-        smsText.replace(/\n/g, '<br>');
-    }
+        <div class="faq-item" data-cat="payment" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>When will I receive my refund?</span><span class="faq-meta"><span class="faq-tag tag-payment">Payment</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Refunds are processed within 5–7 business days after return or cancellation is approved. UPI refunds may arrive in 1–3 days. Bank card refunds may take the full 7 days.</div>
+        </div>
 
-    function resetForm() {
-      document.getElementById('name').value = '';
-      document.getElementById('userPhone').value = '';
-      document.getElementById('email').value = '';
-      document.getElementById('subject').selectedIndex = 0;
-      document.getElementById('message').value = '';
-      document.getElementById('successView').style.display = 'none';
-      document.getElementById('formView').style.display = 'block';
-      updatePreview();
-    }
+        <div class="faq-item" data-cat="delivery" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How do I register as a delivery partner?</span><span class="faq-meta"><span class="faq-tag tag-delivery">Delivery</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Open the homepage, click the ☰ three-line menu, select "Register Form" or "Delivery Partner Registration," fill in all 4 forms, and submit. Our team will contact you within 24–48 hours on WhatsApp to add you as a partner.</div>
+        </div>
 
-    function resetBtn(btn) {
-      btn.disabled = false;
-      btn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1">
-        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
-      <span>SEND MESSAGE TO RENTPLAY</span>`;
-    }
+        <div class="faq-item" data-cat="delivery" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>I submitted delivery registration but got no response</span><span class="faq-meta"><span class="faq-tag tag-delivery">Delivery</span><span class="arrow">▼</span></span></div>
+          <div class="faq-a">Our team responds within 24–48 hours. If you haven't heard back after 2 days, WhatsApp us at +91 81859 51564 or email rentplay199@gmail.com with your registered name and phone number.</div>
+        </div>
 
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+      </div>
+    </div>
+  </div>
 
-    function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+</main>
 
-    function showToast(msg, type) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast' + (type ? ' ' + type : '');
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 5000);
-    }
-  </script>
+<footer>
+  <strong>RentPlay</strong> &nbsp;|&nbsp; rentplay199@gmail.com &nbsp;|&nbsp; +91 81859 51564 &nbsp;|&nbsp; AI &amp; WhatsApp Support: 24/7<br>
+  <span style="font-size:12px; margin-top:6px; display:block;">© 2025 RentPlay. All rights reserved.</span>
+</footer>
+
+<script>
+const AI_SYSTEM = `You are the RentPlay customer support AI on WhatsApp. RentPlay is a product rental platform in India.
+
+== HOW THE WEBSITE WORKS (step-by-step) ==
+1. Open RentPlay website in browser
+2. If no account: click Sign Up, fill name/phone/email to register
+3. If have account: click Sign In, enter email and password
+4. After signing in → automatically taken to Rent Items page (all products shown)
+5. Use search bar to find the item you want
+6. Click "Book Now" on the product card
+
+== HOW TO BOOK AN ITEM (step-by-step) ==
+1. Click "Book Now" on the product
+2. An AGREEMENT SHEET is displayed — read all terms
+3. SIGN by TYPING your FULL NAME in the signature field (mandatory, cannot be skipped)
+4. After typing name and agreeing → BOOKING FORM opens automatically
+5. Fill all required info: delivery address, rental start date, rental end date, phone number, special notes
+6. Click "Book Now" on the booking form
+7. Booking confirmed → WhatsApp confirmation sent instantly
+
+== HOW TO REGISTER AS DELIVERY PARTNER ==
+1. Open RentPlay homepage
+2. Click ☰ THREE-LINE MENU (hamburger icon) at the top of the homepage
+3. Click "Register Form" or "Delivery Partner Registration" in the menu
+4. Fill in all 4 FORMS:
+   - Form 1: Personal Details (name, age, phone, address)
+   - Form 2: Vehicle Details (vehicle type, number plate, driving license)
+   - Form 3: Bank/Payment Details (for receiving earnings)
+   - Form 4: Availability & Service Area (working hours, delivery zone)
+5. Submit all 4 forms
+6. Team contacts you on WhatsApp within 24-48 hours and adds you as delivery partner
+
+== POLICIES ==
+RETURN: Returns accepted during rental period. Refunds in 5-7 business days. Early returns = partial refund. Damaged items may have charges.
+CANCELLATION: 48+ hrs = full refund. 24-48 hrs = 10% fee. Under 24 hrs = 20% fee.
+DAMAGE: Normal wear = no charge. Significant damage = repair/replacement fee per agreement signed.
+EXTENSION: Message WhatsApp 24 hrs before expiry. Subject to availability, billed at same daily rate.
+PAYMENT FAILED: Auto-refund in 5-7 days. Share transaction ID on WhatsApp for faster help.
+PASSWORD: Click "Forgot Password" on sign in page, check spam folder for reset email.
+
+== PAYMENT METHODS ==
+UPI (GPay, PhonePe, Paytm), Debit/Credit Cards, Net Banking, Cash on Delivery (select areas). 100% secure.
+
+== CONTACT ==
+Email: rentplay199@gmail.com | Phone/WhatsApp: +91 81859 51564
+
+== REPLY STYLE ==
+- Friendly, warm, use emojis naturally
+- Use numbered steps for processes
+- Keep replies concise and clear with line breaks
+- Always offer to help with more questions`;
+
+function getTime() {
+  return new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12:true});
+}
+function addMsg(text, role) {
+  const c = document.getElementById('waMessages');
+  const d = document.createElement('div');
+  d.className = 'wa-msg ' + role;
+  d.innerHTML = text.replace(/\n/g,'<br>') + '<div class="time">' + (role==='user'?'✓✓ ':'RentPlay · ') + getTime() + '</div>';
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+async function sendMsg() {
+  const inp = document.getElementById('waInput');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  addMsg(txt, 'user');
+  const ty = document.getElementById('waTyping');
+  ty.style.display = 'block';
+  document.getElementById('waMessages').scrollTop = 9999;
+  const reply = await callAI(txt);
+  ty.style.display = 'none';
+  addMsg(reply, 'bot');
+}
+function sendQuick(t) { document.getElementById('waInput').value = t; sendMsg(); }
+async function callAI(msg) {
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000, system:AI_SYSTEM, messages:[{role:'user',content:msg}]})
+    });
+    const d = await r.json();
+    if (d.content && d.content[0]) return d.content[0].text;
+    return fallback(msg);
+  } catch(e) { return fallback(msg); }
+}
+function fallback(m) {
+  const l = m.toLowerCase();
+  if (l.includes('website') || l.includes('sign in') || l.includes('login') || l.includes('account') || l.includes('how to use'))
+    return '🌐 How to use RentPlay:\n\n1. Open the website\n2. Create account (new users) or Sign In\n3. Auto-taken to Rent Items page\n4. Search your item\n5. Click Book Now\n\nNeed help? WhatsApp: +91 81859 51564';
+  if (l.includes('book') || l.includes('agreement') || l.includes('sign') || l.includes('form'))
+    return '📦 How to Book:\n\n1. Click Book Now on item\n2. Read Agreement Sheet\n3. Type your full name as signature (mandatory)\n4. Booking Form opens automatically\n5. Fill details & click Book Now\n\n✅ WhatsApp confirmation sent instantly!';
+  if (l.includes('delivery') || l.includes('partner') || l.includes('register') || l.includes('3 line') || l.includes('menu') || l.includes('join'))
+    return '🛵 Delivery Partner Steps:\n\n1. Open homepage\n2. Click ☰ three-line menu\n3. Select "Register Form"\n4. Fill all 4 forms:\n   - Form 1: Personal Details\n   - Form 2: Vehicle Details\n   - Form 3: Bank Details\n   - Form 4: Availability & Area\n5. Submit → We call you in 24-48 hrs!\n\nWhatsApp: +91 81859 51564';
+  if (l.includes('return') || l.includes('refund'))
+    return '📦 Return & Refund:\n\n✅ Returns during rental period\n✅ Refunds in 5-7 business days\n✅ Early return = partial refund\n⚠️ Damage may have extra charges';
+  if (l.includes('cancel'))
+    return '❌ Cancellation Policy:\n\n✅ 48+ hrs → Full refund\n⚠️ 24-48 hrs → 10% fee\n❌ Under 24 hrs → 20% fee\n\nEmail: rentplay199@gmail.com';
+  if (l.includes('pay') || l.includes('upi') || l.includes('card'))
+    return '💳 Payment Methods:\n\n📱 UPI — GPay, PhonePe, Paytm\n💳 Debit & Credit Cards\n🏦 Net Banking\n💵 Cash on Delivery (select areas)\n\n100% Secure!';
+  return '🤖 I can help with:\n\n🌐 How to use the website\n📦 How to book a rental\n🛵 Delivery partner registration\n💳 Payments & refunds\n❌ Cancellations & returns\n\n📞 Human support:\nWhatsApp: +91 81859 51564\n📧 rentplay199@gmail.com';
+}
+function switchTab(id, btn) {
+  document.querySelectorAll('.guide-content').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.gtab').forEach(e => e.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleFaq(el) { el.classList.toggle('open'); }
+function filterFaq(cat, btn) {
+  document.querySelectorAll('.ffilter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+}
+</script>
 </body>
-
 </html>
