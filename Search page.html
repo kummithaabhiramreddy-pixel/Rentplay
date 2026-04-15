@@ -1764,7 +1764,7 @@
     // ════════════════════════════════════════
     // GAMES DATABASE — 300+ items
     // ════════════════════════════════════════
-    const GAMES = [
+    let GAMES = [
       // ── INDOOR (50) ──
       { id: 1, name: "Chess Board", cat: "indoor", type: "single", img: "https://th.bing.com/th/id/OIP.d-wiVg0JCSdJ5ueuYRv5GwHaHa?w=147&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3", price: 80, desc: "Classic wooden chess board with premium finish. Perfect for tournaments.", emoji: "♟️", rating: 4.8, reviews: 124 },
       { id: 2, name: "Chess Complete Kit", cat: "indoor", type: "kit", img: "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?w=500&h=300&fit=crop", price: 150, desc: "Full kit: weighted chess pieces + board + timer + storage bag.", emoji: "♟️", rating: 4.9, reviews: 87 },
@@ -2248,12 +2248,18 @@
     }
 
     function speakMessage(message) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-IN';
-        window.speechSynthesis.speak(utterance);
-      }
+      return new Promise((resolve) => {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(message);
+          utterance.lang = 'en-IN';
+          utterance.onend = () => resolve();
+          utterance.onerror = () => resolve();
+          window.speechSynthesis.speak(utterance);
+        } else {
+          resolve();
+        }
+      });
     }
 
     function startVoiceSearch() {
@@ -2284,8 +2290,11 @@
 
       const listeningMsg = "Listening... please say a game or category.";
       status.textContent = listeningMsg;
-      speakMessage(listeningMsg);
-      voiceRecognition.start();
+      speakMessage(listeningMsg).then(() => {
+        if (voiceRecognition) {
+          voiceRecognition.start();
+        }
+      });
 
       voiceRecognition.onresult = (event) => {
         heardSpeech = true;
