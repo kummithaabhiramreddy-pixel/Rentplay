@@ -869,7 +869,8 @@
       position: relative;
       border-top: 1px solid #ddd;
       padding-top: 12px;
-      z-index: 1; /* Context for children */
+      z-index: 1;
+      /* Context for children */
     }
 
     .signature-label {
@@ -894,7 +895,8 @@
       color: #000080;
       padding: 0;
       position: relative;
-      z-index: 10; /* Above stamp */
+      z-index: 10;
+      /* Above stamp */
     }
 
     .stamp-container {
@@ -907,7 +909,8 @@
       opacity: 0;
       transform: scale(2) rotate(20deg);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 5; /* Below signature */
+      z-index: 5;
+      /* Below signature */
     }
 
     .stamp-container.stamped {
@@ -919,7 +922,7 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
 
     .agreement-btn {
@@ -942,15 +945,16 @@
       background: #222;
       letter-spacing: 3px;
     }
-    
+
     .agreement-btn:disabled {
       background: #ccc;
       cursor: not-allowed;
       letter-spacing: 2px;
     }
-      justify-content: center;
-      padding: 1.5rem;
-      overflow-y: auto;
+
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
     }
 
     .modal-overlay.show {
@@ -1424,18 +1428,336 @@
       opacity: 0.6;
       cursor: wait;
     }
+
+    /* ═══════════ SIDEBAR NAVIGATION ═══════════ */
+    .menu-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 1200;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      color: var(--accent);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .menu-btn:hover {
+      border-color: var(--accent);
+      transform: scale(1.1);
+      box-shadow: 0 4px 20px rgba(245, 166, 35, .25);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1500;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 300px;
+      height: 100%;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      z-index: 1600;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar.show {
+      left: 0;
+    }
+
+    .sidebar-head {
+      padding: 30px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .sidebar-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .sidebar-logo span {
+      color: var(--accent);
+    }
+
+    .sidebar-body {
+      padding: 20px 0;
+      flex: 1;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 16px 24px;
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar-link i {
+      font-size: 1.4rem;
+      width: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .sidebar-link:hover {
+      background: rgba(245, 166, 35, 0.05);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    .sidebar-link:hover i {
+      color: var(--accent);
+    }
+
+    .sidebar-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .sidebar-close:hover {
+      color: var(--accent);
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- SIDEBAR NAVIGATION -->
+  <button class="menu-btn" onclick="toggleSidebar()" title="Open Menu">
+    <div style="display:flex; flex-direction:column; align-items:center; line-height:1;">
+      <span style="font-size:10px; font-weight:800; color:var(--text); margin-bottom:-2px;">RP</span>
+      <span style="font-size:16px;">☰</span>
+    </div>
+  </button>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    <div class="sidebar-head">
+      <div class="sidebar-logo" onclick="openLanguage()" style="cursor: pointer;">RENT<span>PLAY</span></div>
+    </div>
+    <div class="sidebar-body" style="overflow-y: auto; flex: 1;">
+      <a href="javascript:void(0)" class="sidebar-link" onclick="openProfile()" data-t="sidebar_profile">
+        <i>👤</i> Profile
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="openMyOrders()" data-t="sidebar_orders">
+        <i>📦</i> My Order
+      </a>
+      <div style="height: 1px; background: var(--border); margin: 10px 24px; opacity: 0.5;"></div>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="alert('Feature coming soon!')" data-t="sidebar_edit">
+        <i>📝</i> Edit Profile
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="alert('Feature coming soon!')" data-t="sidebar_cards">
+        <i>💳</i> Save Cards & Gifts
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="alert('Feature coming soon!')" data-t="sidebar_address">
+        <i>📍</i> Saved Addresses
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="openLanguage()" data-t="sidebar_lang">
+        <i>🌐</i> Select Language
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="alert('Feature coming soon!')" data-t="sidebar_notif">
+        <i>🔔</i> Notification Settings
+      </a>
+      <a href="javascript:void(0)" class="sidebar-link" onclick="alert('Feature coming soon!')" data-t="sidebar_privacy">
+        <i>🛡️</i> Privacy Center
+      </a>
+      <div style="height: 1px; background: var(--border); margin: 10px 24px; opacity: 0.5;"></div>
+      <a href="index.html" class="sidebar-link" onclick="handleLogOut()" style="color: #f87171;" data-t="sidebar_logout">
+        <i>🚪</i> Log Out
+      </a>
+    </div>
+    <div style="padding: 20px 24px; border-top: 1px solid var(--border);">
+      <p style="font-size: 11px; color: var(--muted);">© 2026 RentPlay Premium</p>
+    </div>
+  </div>
+
+  <!-- MY ORDERS PAGE (FULL SCREEN OVERLAY) -->
+  <div class="modal-overlay" id="ordersOverlay" style="padding: 0; align-items: flex-start;">
+    <div class="modal"
+      style="max-width: 100%; width: 100%; height: 100%; border-radius: 0; display: flex; flex-direction: column; background: var(--bg);">
+      <div
+        style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10;">
+        <h2 style="margin:0; font-family:'Barlow Condensed', sans-serif; letter-spacing:1px;">📦 My Orders & Bookings
+        </h2>
+        <button class="modal-close" onclick="closeOrders()" style="position:static; font-size:24px;">✕</button>
+      </div>
+
+      <div id="ordersList" style="flex: 1; overflow-y: auto; padding: 24px;">
+        <!-- Items generated by JS -->
+      </div>
+
+      <div style="padding: 16px; border-top: 1px solid var(--border); text-align: center; background: var(--bg);">
+        <p style="font-size: 12px; color: var(--muted);">Need help with an order? <a href="tel:+919876543210"
+            style="color:var(--accent); text-decoration:none;">Contact Support</a></p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- LANGUAGE SELECTION (BLACK SCREEN LEFT DRAWER) -->
+  <div class="modal-overlay" id="langOverlay" onclick="if(event.target===this)closeLanguage()" style="padding: 0; align-items: flex-start; z-index: 9999; background: #000;">
+    <div class="modal" id="langModal" style="max-width: 85%; width: 300px; height: 100%; border-radius: 0; display: flex; flex-direction: column; background: #000; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid #222;">
+      <div
+        style="padding: 16px; border-bottom: 1px solid #333; display: flex; align-items: center; background: #000; color: #fff; position: sticky; top: 0; z-index: 100;">
+        <button onclick="closeLanguage()"
+          style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer; margin-right:15px;">←</button>
+        <h2 style="margin:0; font-size:18px; font-weight:500;" data-t="sidebar_lang">Select Language</h2>
+      </div>
+
+      <div id="langList" style="flex: 1; overflow-y: auto;">
+        <!-- Languages with dynamic styling -->
+        <style>
+          .lang-item {
+            display: flex;
+            align-items: left;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #111;
+            cursor: pointer;
+            color: #fff;
+          }
+
+          .lang-item:active {
+            background: #f5faff;
+          }
+
+          .lang-label {
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+          .lang-native {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 2px;
+          }
+
+          .lang-item:hover {
+            background: #111;
+          }
+
+          .lang-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: relative;
+          }
+
+          .lang-item.selected .lang-radio::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+          }
+        </style>
+
+        <div class="lang-item" onclick="changeLanguage('en')">
+          <div>
+            <div class="lang-label">English</div>
+            <div class="lang-native">Default</div>
+          </div>
+          <div class="lang-radio" id="radio-en"></div>
+        </div>
+        <div class="lang-item" onclick="changeLanguage('hi')">
+          <div>
+            <div class="lang-label">Hindi</div>
+            <div class="lang-native">हिंदी</div>
+          </div>
+          <div class="lang-radio" id="radio-hi"></div>
+        </div>
+        <div class="lang-item" onclick="changeLanguage('te')">
+          <div>
+            <div class="lang-label">Telugu</div>
+            <div class="lang-native">తెలుగు</div>
+          </div>
+          <div class="lang-radio" id="radio-te"></div>
+        </div>
+        <div class="lang-item" onclick="changeLanguage('ta')">
+          <div>
+            <div class="lang-label">Tamil</div>
+            <div class="lang-native">தமிழ்</div>
+          </div>
+          <div class="lang-radio" id="radio-ta"></div>
+        </div>
+        <div class="lang-item" onclick="changeLanguage('kn')">
+          <div>
+            <div class="lang-label">Kannada</div>
+            <div class="lang-native">ಕನ್ನಡ</div>
+          </div>
+          <div class="lang-radio" id="radio-kn"></div>
+        </div>
+        <div class="lang-item" onclick="changeLanguage('ml')">
+          <div>
+            <div class="lang-label">Malayalam</div>
+            <div class="lang-native">മലയാളം</div>
+          </div>
+          <div class="lang-radio" id="radio-ml"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="hero">
-    <div class="hero-badge">🎮 Premium Game Rentals</div>
-    <h1>RENT ANY GAME<br>ANYTIME</h1>
-    <p>Indoor & outdoor games for every occasion — single pieces or full kits delivered to your door.</p>
+    <div class="hero-badge" data-t="hero_badge">🎮 Premium Game Rentals</div>
+    <h1 data-t="hero_title">RENT ANY GAME<br>ANYTIME</h1>
+    <p data-t="hero_sub">Indoor & outdoor games for every occasion — single pieces or full kits delivered to your door.
+    </p>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search item name..." oninput="filterGames()"
+      <input type="text" id="searchInput" placeholder="Search games, kits, equipment..." oninput="filterGames()"
         autocomplete="off" />
       <div class="search-actions">
         <button class="search-btn" type="button" title="Use camera" onclick="startScanner()">📷</button>
@@ -1446,45 +1768,46 @@
     <div class="result-count" id="resultCount"></div>
   </div>
 
+
   <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('all',this)">All Games</button>
-    <button class="filter-btn" onclick="setFilter('indoor',this)">🏠 Indoor</button>
-    <button class="filter-btn" onclick="setFilter('outdoor',this)">🌳 Outdoor</button>
-    <button class="filter-btn" onclick="setFilter('new',this)">🆕 New</button>
-    <button class="filter-btn" onclick="setFilter('board',this)">🎲 Board</button>
-    <button class="filter-btn" onclick="setFilter('fitness',this)">💪 Fitness</button>
-    <button class="filter-btn" onclick="setFilter('water',this)">🌊 Water</button>
-    <button class="filter-btn" onclick="setFilter('kids',this)">👶 Kids</button>
+    <button class="filter-btn active" onclick="setFilter('all',this)" data-t="cat_all">All Games</button>
+    <button class="filter-btn" onclick="setFilter('indoor',this)" data-t="cat_indoor">🏠 Indoor</button>
+    <button class="filter-btn" onclick="setFilter('outdoor',this)" data-t="cat_outdoor">🌳 Outdoor</button>
+    <button class="filter-btn" onclick="setFilter('new',this)" data-t="cat_new">🆕 New</button>
+    <button class="filter-btn" onclick="setFilter('board',this)" data-t="cat_board">🎲 Board</button>
+    <button class="filter-btn" onclick="setFilter('fitness',this)" data-t="cat_fit">💪 Fitness</button>
+    <button class="filter-btn" onclick="setFilter('water',this)" data-t="cat_water">🌊 Water</button>
+    <button class="filter-btn" onclick="setFilter('kids',this)" data-t="cat_kids">👶 Kids</button>
     <button class="filter-btn" onclick="setFilter('kit',this)">📦 Kits</button>
     <button class="filter-btn" onclick="setFilter('single',this)">🎯 Single</button>
   </div>
 
   <div id="indoorSection">
-    <div class="section-title">🏠 Indoor Games <span id="indoorCount"></span></div>
+    <div class="section-title"><span data-t="cat_indoor">🏠 Indoor Games</span> <span id="indoorCount"></span></div>
     <div class="grid" id="indoorGrid"></div>
   </div>
   <div id="outdoorSection">
-    <div class="section-title">🌳 Outdoor Games <span id="outdoorCount"></span></div>
+    <div class="section-title"><span data-t="cat_outdoor">🌳 Outdoor Games</span> <span id="outdoorCount"></span></div>
     <div class="grid" id="outdoorGrid"></div>
   </div>
   <div id="newSection">
-    <div class="section-title">🆕 New & Trending <span id="newCount"></span></div>
+    <div class="section-title"><span data-t="cat_new">🆕 New & Trending</span> <span id="newCount"></span></div>
     <div class="grid" id="newGrid"></div>
   </div>
   <div id="boardSection">
-    <div class="section-title">🎲 Board & Table Games <span id="boardCount"></span></div>
+    <div class="section-title"><span data-t="cat_board">🎲 Board & Table Games</span> <span id="boardCount"></span></div>
     <div class="grid" id="boardGrid"></div>
   </div>
   <div id="fitnessSection">
-    <div class="section-title">💪 Fitness & Sports <span id="fitnessCount"></span></div>
+    <div class="section-title"><span data-t="cat_fit">💪 Fitness & Sports</span> <span id="fitnessCount"></span></div>
     <div class="grid" id="fitnessGrid"></div>
   </div>
   <div id="waterSection">
-    <div class="section-title">🌊 Water Sports <span id="waterCount"></span></div>
+    <div class="section-title"><span data-t="cat_water">🌊 Water Sports</span> <span id="waterCount"></span></div>
     <div class="grid" id="waterGrid"></div>
   </div>
   <div id="kidsSection">
-    <div class="section-title">👶 Kids Games <span id="kidsCount"></span></div>
+    <div class="section-title"><span data-t="cat_kids">👶 Kids Games</span> <span id="kidsCount"></span></div>
     <div class="grid" id="kidsGrid"></div>
   </div>
 
@@ -1526,21 +1849,25 @@
         <h3>📄 Agreement Sheet</h3>
       </div>
       <div class="agreement-content">
-        <p>I hereby agree that if any item is damaged during the rental period, I will be liable to pay the full repair or replacement cost as per RentPlay policies.</p>
+        <p>I hereby agree that if any item is damaged during the rental period, I will be liable to pay the full repair
+          or replacement cost as per RentPlay policies.</p>
         <p style="margin-top:10px;">The identification and quality check will be done upon pickup and return.</p>
       </div>
 
       <div class="signature-area">
         <span class="signature-label">Typed Signature of Renter</span>
-        <input type="text" id="renterSignature" class="signature-input" placeholder="Type your full name" oninput="handleSignatureChange()" />
-        
+        <input type="text" id="renterSignature" class="signature-input" placeholder="Type your full name"
+          oninput="handleSignatureChange()" />
+
         <!-- Hidden until 'Proceed' is clicked -->
-        <div class="stamp-container" id="stampContainer" style="opacity:0; transform: scale(3); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div class="stamp-container" id="stampContainer"
+          style="opacity:0; transform: scale(3); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
           <img src="rentplay_stamp.png" alt="RentPlay Stamp" />
         </div>
       </div>
 
-      <button type="button" id="proceedToBookBtn" class="agreement-btn" disabled onclick="finalizeAgreement()">Proceed to Booking</button>
+      <button type="button" id="proceedToBookBtn" class="agreement-btn" disabled onclick="finalizeAgreement()">Proceed
+        to Booking</button>
     </div>
   </div>
 
@@ -1576,21 +1903,20 @@
 
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label>Delivery Address *</label>
-            <button type="button" onclick="fetchLiveLocation()" class="btn-location" id="locBtn">📍 Use Live
-              Location</button>
+            <label data-t="lbl_address">Delivery Address *</label>
+            <button type="button" onclick="fetchLiveLocation()" class="btn-location" id="locBtn" data-t="lbl_live_loc">📍 Use Live Location</button>
           </div>
           <input type="text" id="mAddress" placeholder="Street, City, Pincode" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Booking Date</label>
+            <label data-t="lbl_date">Booking Date</label>
             <input type="text" id="mDate" readonly
               style="background:rgba(255,255,255,0.05); color:var(--muted); cursor:not-allowed;" />
           </div>
           <div class="form-group">
-            <label>Day</label>
+            <label data-t="lbl_day">Day</label>
             <input type="text" id="mDay" readonly
               style="background:rgba(255,255,255,0.05); color:var(--muted); cursor:not-allowed;" />
           </div>
@@ -1598,7 +1924,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label>Booking Time</label>
+            <label data-t="lbl_time">Booking Time</label>
             <input type="text" id="mTime" readonly
               style="background:rgba(255,255,255,0.05); color:var(--muted); cursor:not-allowed;" />
           </div>
@@ -1609,18 +1935,18 @@
 
         <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem;">
           <div class="form-group" style="margin-bottom:0;flex:1;">
-            <label>Rental Duration</label>
+            <label data-t="lbl_duration">Rental Duration</label>
             <select id="mDuration" onchange="updatePrice()">
-              <option value="0">0 Days</option>
-              <option value="1" selected>1 Day</option>
-              <option value="3">3 Days</option>
-              <option value="7">1 Week</option>
-              <option value="14">2 Weeks</option>
-              <option value="30">1 Month</option>
+              <option value="0" data-t="dur_0">0 Days</option>
+              <option value="1" selected data-t="dur_1">1 Day</option>
+              <option value="3" data-t="dur_3">3 Days</option>
+              <option value="7" data-t="dur_7">1 Week</option>
+              <option value="14" data-t="dur_14">2 Weeks</option>
+              <option value="30" data-t="dur_30">1 Month</option>
             </select>
           </div>
           <div style="flex:1;">
-            <div class="hours-label">Extra Hours / Day</div>
+            <div class="hours-label" data-t="lbl_extra_hours">Extra Hours / Day</div>
             <div class="hours-ctrl">
               <button type="button" onclick="changeHours(-1)">−</button>
               <span id="hoursVal">0</span>
@@ -1631,18 +1957,18 @@
 
         <div class="price-preview">
           <div>
-            <div class="label">Total Amount</div>
+            <div class="label" data-t="lbl_total">Total Amount</div>
             <div style="font-size:11px;color:var(--muted);" id="priceBreakdown"></div>
           </div>
           <div class="total" id="totalPrice">₹0</div>
         </div>
 
         <div class="pay-tabs">
-          <button type="button" class="pay-tab active" id="tab-cod" onclick="setPayment('cod')">💵 Cash</button>
-          <button type="button" class="pay-tab" id="tab-phonepay" onclick="setPayment('phonepay')">📱 PhonePe</button>
+          <button type="button" class="pay-tab active" id="tab-cod" onclick="setPayment('cod')" data-t="lbl_cod">💵 Cash</button>
+          <button type="button" class="pay-tab" id="tab-phonepay" onclick="setPayment('phonepay')" data-t="lbl_phonepe">📱 PhonePe</button>
         </div>
 
-        <button type="submit" class="modal-confirm">Book / Rent Now</button>
+        <button type="submit" class="modal-confirm" data-t="btn_book">Book / Rent Now</button>
         <p id="bookingMsg" class="success-msg"></p>
       </form>
     </div>
@@ -1694,7 +2020,7 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">
-        <h2>🎮 GameRent</h2>
+        <h2 onclick="openLanguage()" style="cursor: pointer; color: #fff;">🎮 Rent<span style="color:var(--accent);">Play</span></h2>
         <p>India's largest game rental platform. Indoor, outdoor, board, fitness — every game at your doorstep. Serving
           Amaravathi & all major cities.</p>
       </div>
@@ -1731,7 +2057,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 GameRent. All rights reserved. | Delivering joy, one game at a time.</p>
+      <p>© 2026 RentPlay. All rights reserved. | Delivering joy, one game at a time.</p>
     </div>
   </footer>
 
@@ -1766,7 +2092,7 @@
     // ════════════════════════════════════════
     let GAMES = [
       // ── INDOOR (50) ──
-      { id: 1, name: "Chess Board", cat: "indoor", type: "single", img: "https://th.bing.com/th/id/OIP.d-wiVg0JCSdJ5ueuYRv5GwHaHa?w=147&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3", price: 80, desc: "Classic wooden chess board with premium finish. Perfect for tournaments.", emoji: "♟️", rating: 4.8, reviews: 124 },
+      { id: 1, name: "Chess Board", cat: "indoor", type: "single", img: "https://th.bing.com/th/id/OIP.d-wiVg0JCSdJ5ueuYRv5GwHaHa?w=147&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3", price: 80, desc: "Classic wooden chess board with premium finish. Perfect for tournaments.", emoji: "♟️", rating: 4.8, reviews: 124, _localName: "Chess Board" },
       { id: 2, name: "Chess Complete Kit", cat: "indoor", type: "kit", img: "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?w=500&h=300&fit=crop", price: 150, desc: "Full kit: weighted chess pieces + board + timer + storage bag.", emoji: "♟️", rating: 4.9, reviews: 87 },
       { id: 3, name: "Carrom Board", cat: "indoor", type: "single", img: "https://th.bing.com/th/id/OIP.0mxhRyt7x_OisLXjEo1L-QHaHa?w=211&h=212&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3", price: 100, desc: "Full-size tournament carrom board with smooth powder-coated surface.", emoji: "🎯", rating: 4.7, reviews: 203 },
       { id: 4, name: "Carrom Full Kit", cat: "indoor", type: "kit", img: "https://th.bing.com/th/id/OIP.Q3O-tAG-KVlq5kN6JNPYYQHaHa?w=155&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3", price: 160, desc: "Carrom board + coins set + strikers + boric powder + score chart.", emoji: "🎯", rating: 4.8, reviews: 165 },
@@ -2107,29 +2433,32 @@
         grid.innerHTML = `<div class="no-results"><h3>No items found</h3><p>Try a different search term.</p></div>`;
         return;
       }
-      grid.innerHTML = list.map((g, i) => `
-    <div class="card" style="animation-delay:${(i % 20) * 0.04}s" onclick="openDetail(${g.id})">
-      <img class="card-img" src="${g.img}" alt="${g.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-      <div class="card-img-placeholder" style="display:none">${g.emoji}</div>
-      <div class="card-body">
-        <div class="card-name">${g.name}</div>
-        <div class="badges">
-          <span class="badge ${g.type === 'kit' ? 'badge-kit' : 'badge-single'}">${g.type === 'kit' ? '📦 Kit' : '🎯 Single'}</span>
-          <span class="badge badge-${g.cat}">${g.cat === 'indoor' ? '🏠 Indoor' : g.cat === 'outdoor' ? '🌳 Outdoor' : g.cat === 'board' ? '🎲 Board' : g.cat === 'fitness' ? '💪 Fitness' : g.cat === 'water' ? '🌊 Water' : g.cat === 'kids' ? '👶 Kids' : '🆕 New'}</span>
-        </div>
-        <div class="card-rating">
-          <span class="stars">${starsHtml(g.rating)}</span>
-          <span class="rating-num">${g.rating}</span>
-          <span class="rating-count">(${g.reviews})</span>
-        </div>
-        <div class="card-desc">${g.desc}</div>
-        <div class="card-footer">
-          <div class="price">₹${g.price} <span>/ day</span></div>
-          <button class="rent-btn" onclick="event.stopPropagation();openAgreement('${g.name.replace(/'/g, "\\'")}',${g.price})">Book</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+      grid.innerHTML = list.map((g, i) => {
+        const localName = g._localName || g.name;
+        return `
+          <div class="card" data-game-id="${g.id}" style="animation-delay:${(i % 20) * 0.04}s" onclick="openDetail(${g.id})">
+            <img class="card-img" src="${g.img}" alt="${localName}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="card-img-placeholder" style="display:none">${g.emoji}</div>
+            <div class="card-body">
+              <div class="card-name">${localName}</div>
+              <div class="badges">
+                <span class="badge ${g.type === 'kit' ? 'badge-kit' : 'badge-single'}">${g.type === 'kit' ? '📦 Kit' : '🎯 Single'}</span>
+                <span class="badge badge-${g.cat}">${g.cat === 'indoor' ? '🏠 Indoor' : g.cat === 'outdoor' ? '🌳 Outdoor' : g.cat === 'board' ? '🎲 Board' : g.cat === 'fitness' ? '💪 Fitness' : g.cat === 'water' ? '🌊 Water' : g.cat === 'kids' ? '👶 Kids' : '🆕 New'}</span>
+              </div>
+              <div class="card-rating">
+                <span class="stars">${starsHtml(g.rating)}</span>
+                <span class="rating-num">${g.rating}</span>
+                <span class="rating-count">(${g.reviews})</span>
+              </div>
+              <div class="card-desc">${g.desc}</div>
+              <div class="card-footer">
+                <div class="price">₹${g.price} <span data-t="price_suffix">/ day</span></div>
+                <button class="rent-btn" onclick="event.stopPropagation();openAgreement('${localName.replace(/'/g, "\\'")}',${g.price})">Book</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function filterGames() {
@@ -2349,64 +2678,6 @@
       };
     }
 
-    function stopScanner() {
-      if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().then(() => {
-          document.getElementById('scannerOverlay').classList.remove('show');
-        }).catch(err => console.error(err));
-      } else {
-        document.getElementById('scannerOverlay').classList.remove('show');
-      }
-    }
-
-    function onScanSuccess(decodedText) {
-      stopScanner();
-      const input = document.getElementById('searchInput');
-
-      // ── BROADEN SEARCH TO SHOW SIMILAR ITEMS ──
-      // Extract base keyword (e.g., "Chess" from "Chess Board" or "Chess Kit")
-      let query = decodedText.toLowerCase().trim();
-      const modifiers = ["board", "kit", "set", "full", "racket", "bat", "ball", "single", "complete", "piece", "equipment", "gear"];
-
-      const words = query.split(' ');
-      if (words.length > 1) {
-        // If the first word isn't a generic term, use it as the base
-        const base = words.filter(w => !modifiers.includes(w))[0];
-        if (base && base.length > 3) {
-          query = base;
-        }
-      }
-
-      input.value = query;
-      filterGames();
-
-      const q = query.toLowerCase();
-      const match = GAMES.filter(g =>
-        g.name.toLowerCase().includes(q) ||
-        g.id.toString() === q ||
-        g.desc.toLowerCase().includes(q)
-      );
-
-      if (match.length === 0) {
-        SECTIONS.forEach((s, idx) => {
-          const grid = document.getElementById(s.gridId);
-          if (idx === 0) {
-            document.getElementById(s.sectionId).style.display = '';
-            grid.innerHTML = `
-          <div class="no-results" style="padding: 4rem 2rem;">
-            <div style="font-size: 5rem; margin-bottom: 1.5rem;">🚫</div>
-            <h3 class="no-stock-msg">no stock please wait next time</h3>
-            <p style="color:var(--muted); margin-top: 0.5rem;">The scanner detected "${decodedText}", but it's not in our list.</p>
-          </div>`;
-            document.getElementById(s.countId).textContent = '0 items';
-          } else {
-            document.getElementById(s.sectionId).style.display = 'none';
-          }
-        });
-        document.getElementById('resultCount').textContent = `Zero matches for "${decodedText}"`;
-      }
-    }
-
     async function handleFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -2515,19 +2786,46 @@
       }
     }
 
+    function mapScannedLabel(decodedText) {
+      const text = decodedText.toLowerCase().trim();
+      for (const [aiLabel, mappedName] of Object.entries(VISION_SYNONYMS)) {
+        if (text.includes(aiLabel)) return mappedName;
+      }
+
+      const modifiers = ["board", "kit", "set", "full", "racket", "bat", "ball", "single", "complete", "piece", "equipment", "gear", "photo", "image", "scan"];
+      const words = text.split(/\s+/).filter(Boolean);
+      const importantWords = words.filter(w => !modifiers.includes(w));
+      if (importantWords.length > 0) {
+        return importantWords.sort((a, b) => b.length - a.length)[0];
+      }
+      return text;
+    }
+
     function onScanSuccess(decodedText) {
       stopScanner();
       const input = document.getElementById('searchInput');
-      input.value = decodedText;
 
-      const q = decodedText.toLowerCase().trim();
+      currentFilter = 'all';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const allFilter = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.toLowerCase().includes('all'));
+      if (allFilter) allFilter.classList.add('active');
+
+      const query = mapScannedLabel(decodedText);
+      input.value = query;
+      filterGames();
+
+      const q = query.toLowerCase().trim();
       const match = GAMES.filter(g =>
         g.name.toLowerCase().includes(q) ||
         g.id.toString() === q ||
-        g.desc.toLowerCase().includes(q)
+        g.desc.toLowerCase().includes(q) ||
+        g.cat.toLowerCase().includes(q) ||
+        g.type.toLowerCase().includes(q)
       );
 
       if (match.length === 0) {
+        const T = (typeof translations !== 'undefined' ? translations : {})[currentLang] || {};
+        const noStockMsg = T.no_stock_msg || "no stock please wait next time";
         SECTIONS.forEach((s, idx) => {
           const grid = document.getElementById(s.gridId);
           if (idx === 0) {
@@ -2535,8 +2833,8 @@
             grid.innerHTML = `
           <div class="no-results" style="padding: 5rem 2rem;">
             <div style="font-size: 5rem; margin-bottom: 1.5rem;">🚫</div>
-            <h3 class="no-stock-msg">no stock please wait next time</h3>
-            <p style="color:var(--muted); margin-top: 0.5rem;">The scanner detected "${decodedText}", but it's not in our list.</p>
+            <h3 class="no-stock-msg">${noStockMsg}</h3>
+            <p style="color:var(--muted); margin-top: 0.5rem;">${T.scanner_not_found_msg || 'The scanner detected "' + decodedText + '", but it\'s not in our list.'}</p>
           </div>`;
             document.getElementById(s.countId).textContent = '0 items';
           } else {
@@ -2545,7 +2843,7 @@
         });
         document.getElementById('resultCount').textContent = `Vision Result: "${decodedText}" (No Match)`;
       } else {
-        filterGames();
+        document.getElementById('resultCount').textContent = `${match.length} result${match.length !== 1 ? 's' : ''} for "${query}"`;
       }
     }
 
@@ -2578,7 +2876,7 @@
     function finalizeAgreement() {
       const stamp = document.getElementById('stampContainer');
       const btn = document.getElementById('proceedToBookBtn');
-      
+
       // 1. Show the stamp with animation
       stamp.style.opacity = '1';
       stamp.style.transform = 'scale(1)';
@@ -2589,11 +2887,11 @@
       setTimeout(() => {
         document.getElementById('agreementOverlay').classList.remove('show');
         openModal(pendingItemName, pendingItemPrice);
-        
+
         // Reset button for next time
         btn.innerHTML = "<span>Proceed to Booking</span>";
         btn.disabled = false;
-        
+
         // Reset stamp for next time
         stamp.style.opacity = '0';
         stamp.style.transform = 'scale(3)';
@@ -2607,13 +2905,16 @@
       const g = GAMES.find(x => x.id === id);
       if (!g) return;
 
-      document.getElementById('detailName').textContent = g.name;
+      const T = (typeof translations !== 'undefined' ? translations : {})[currentLang] || {};
+      const localName = g._localName || g.name;
+
+      document.getElementById('detailName').textContent = localName;
       document.getElementById('detailPrice').textContent = '₹' + g.price;
-      document.getElementById('detailPriceDay').textContent = 'per day';
+      document.getElementById('detailPriceDay').textContent = T.price_suffix || 'per day';
 
       const img = document.getElementById('detailImg');
       const ph = document.getElementById('detailPlaceholder');
-      img.src = g.img; img.alt = g.name;
+      img.src = g.img; img.alt = localName;
       img.style.display = 'block'; ph.style.display = 'none';
       img.onerror = () => { img.style.display = 'none'; ph.style.display = 'flex'; ph.textContent = g.emoji; };
 
@@ -2671,9 +2972,14 @@
       currentItemName = name;
       currentBasePrice = price;
       currentHours = 0;
+
+      const T = (typeof translations !== 'undefined' ? translations : {})[currentLang] || {};
+      const itemKey = GAMES.find(x => x.name === name)?.id;
+      const localName = T['item_' + itemKey] || name;
+
       document.getElementById('hoursVal').textContent = '0';
-      document.getElementById('modalItemNameDisplay').textContent = name + ' — ₹' + price + '/day';
-      document.getElementById('itemName').value = name;
+      document.getElementById('modalItemNameDisplay').textContent = localName + ' — ₹' + price + (T.price_suffix || '/day');
+      document.getElementById('itemName').value = localName;
       document.getElementById('userName').value = '';
       document.getElementById('userPhone').value = '';
       document.getElementById('userEmail').value = '';
@@ -2737,16 +3043,19 @@
         });
 
         const result = await res.json();
-        
-        const smsStatus = result.smsSuccess 
-          ? "✅ SMS Alert Sent" 
+
+        // SAVE LOCALLY ON SUCCESS
+        saveLocalBooking(data, result.bookingId);
+
+        const smsStatus = result.smsSuccess
+          ? "✅ SMS Alert Sent"
           : "";
 
         // ── EMAILJS CONNECTION & SENDING ──
         if (data.userEmail) {
           try {
             console.log("Preparing email for:", data.userEmail);
-            
+
             // Generate QR Code via reliable External API (GoQR)
             const bookingId = result.bookingId || "B" + Date.now();
             const qrInfo = `ID: ${bookingId} | User: ${data.userName} | Item: ${data.itemName}`;
@@ -2763,7 +3072,7 @@
             };
 
             await emailjs.send("service_og80dtw", "template_4lh203y", templateParams);
-            
+
             msg.innerHTML = `✅ ID #${bookingId} Created.<br>${smsStatus}<br>📧 QR Code Emailed.`;
           } catch (emailErr) {
             console.error("FAILED TO SEND EMAIL:", emailErr);
@@ -2773,10 +3082,14 @@
           msg.innerHTML = `✅ ID #${result.bookingId} Saved.<br>${smsStatus}`;
         }
 
-        msg.style.color = result.smsSuccess ? "var(--green)" : "var(--amber)";
         setTimeout(closeModal, 5000);
       } catch (err) {
         console.error("Booking submission error:", err);
+        const demoId = "D" + Date.now();
+
+        // SAVE LOCALLY EVEN IF SERVER FAILS
+        saveLocalBooking(data, demoId);
+
         // Fallback demo send
         if (data.userEmail) {
           try {
@@ -2790,8 +3103,8 @@
               total_price: data.total,
               qr_code: qrUrl
             });
-            msg.textContent = "Your item - booking is confirmed."; 
-          } catch(e) {
+            msg.textContent = "Your item - booking is confirmed.";
+          } catch (e) {
             console.error("DEMO MODE ERROR:", e);
             alert("Connection Error: Check internet and EmailJS Settings.");
             msg.textContent = "❌ Connection Error.";
@@ -2919,6 +3232,335 @@
 
     // Init
     filterGames();
+
+    // SIDEBAR & PROFILE LOGIC
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('show');
+      document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+
+
+    function openMyOrders() {
+      toggleSidebar();
+      renderOrders();
+      document.getElementById('ordersOverlay').classList.add('show');
+    }
+
+    function renderOrders() {
+      const saved = localStorage.getItem('acctSession');
+      const list = document.getElementById('ordersList');
+
+      if (!saved || !JSON.parse(saved).bookings || JSON.parse(saved).bookings.length === 0) {
+        list.innerHTML = `
+          <div style="height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--muted);">
+            <div style="font-size:60px; margin-bottom:15px;">📦</div>
+            <p>No successful bookings found yet.</p>
+            <button onclick="closeOrders()" class="modal-confirm" style="width:auto; padding:10px 30px; margin-top:20px;">Start Browsing</button>
+          </div>
+        `;
+      } else {
+        const data = JSON.parse(saved).bookings;
+        list.innerHTML = `
+          <div style="max-width: 600px; margin: 0 auto;">
+            ${data.map(b => `
+              <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
+                  <div>
+                    <h4 style="margin:0 0 5px; color:var(--accent); font-size:1.4rem;">${b.item_name}</h4>
+                    <span style="font-size:11px; padding:4px 10px; border-radius:12px; background:rgba(46, 213, 115, 0.1); color:var(--green); font-weight:700;">${b.status}</span>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-weight:800; font-size:1.2rem;">${b.total}</div>
+                    <div style="font-size:11px; color:var(--muted);">Booking ID: #${b.id}</div>
+                  </div>
+                </div>
+                
+                <div style="font-size:13px; color:var(--text); margin-bottom:15px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                  <div><span style="color:var(--muted);">Booking Date:</span><br>${b.booking_date}</div>
+                  <div><span style="color:var(--muted);">Placed On:</span><br>${b.created_at}</div>
+                </div>
+
+                <div style="display:flex; gap:10px; border-top: 1px solid var(--border); padding-top:15px;">
+                  <button class="modal-confirm" style="margin:0; flex:1; background:rgba(255,255,255,0.05); color:var(--text); font-size:12px;" onclick="window.location.reload()">📋 Re-book</button>
+                  <button class="modal-confirm" style="margin:0; flex:1; background:#f8717122; color:#f87171; font-size:12px; border:1px solid #f8717144;" onclick="cancelBooking('${b.id}')">❌ Cancel Booking</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+    }
+
+    function cancelBooking(id) {
+      if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+      const saved = localStorage.getItem('acctSession');
+      if (saved) {
+        let session = JSON.parse(saved);
+        session.bookings = session.bookings.filter(b => b.id !== id);
+        localStorage.setItem('acctSession', JSON.stringify(session));
+        renderOrders();
+        alert("Booking cancelled successfully.");
+      }
+    }
+
+    function saveLocalBooking(data, bId) {
+      const saved = localStorage.getItem('acctSession');
+      let session = saved ? JSON.parse(saved) : { name: data.userName, phone: data.userPhone, email: data.userEmail, address: data.address, bookings: [] };
+
+      // Update session info
+      session.name = data.userName;
+      session.phone = data.userPhone;
+      session.email = data.userEmail;
+      session.address = data.address;
+      if (!session.bookings) session.bookings = [];
+
+      session.bookings.unshift({
+        id: bId || "B" + Date.now(),
+        item_name: data.itemName,
+        total: data.total,
+        status: 'Active',
+        booking_date: data.bookingDate,
+        created_at: new Date().toLocaleDateString()
+      });
+
+      localStorage.setItem('acctSession', JSON.stringify(session));
+    }
+
+
+
+    function openProfile() {
+      toggleSidebar();
+      const saved = localStorage.getItem('acctSession');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          document.getElementById('profNameTitle').textContent = data.name || 'Set Your Name';
+          document.getElementById('profPhoneSub').textContent = data.phone || '+91 00000 00000';
+          document.getElementById('profEmailVal').textContent = data.email || 'Not Provided';
+          document.getElementById('profAddressVal').textContent = data.address || 'Not Provided';
+        } catch (e) { }
+      }
+      document.getElementById('profileOverlay').classList.add('show');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileOverlay').classList.remove('show');
+    }
+
+    // ── MULTI-LANGUAGE SYSTEM ──
+    const translations = {
+      en: {
+        hero_badge: "🎮 Premium Game Rentals",
+        hero_title: "RENT ANY GAME<br>ANYTIME",
+        hero_sub: "Indoor & outdoor games for every occasion — single pieces or full kits delivered to your door.",
+        cat_all: "All Games",
+        cat_indoor: "🏠 Indoor",
+        cat_outdoor: "🌳 Outdoor",
+        cat_new: "🆕 New",
+        cat_board: "🎲 Board",
+        cat_fit: "💪 Fitness",
+        cat_water: "🌊 Water",
+        cat_kids: "👶 Kids",
+        sidebar_profile: "👤 Profile",
+        sidebar_orders: "📦 My Order",
+        sidebar_lang: "🌐 Select Language",
+        sidebar_logout: "🚪 Log Out"
+      },
+      hi: {
+        hero_badge: "🎮 प्रीमियम गेम रेंटल",
+        hero_title: "कोई भी गेम रेंट करें<br>कभी भी",
+        hero_sub: "हर अवसर के लिए इनडोर और आउटडोर गेम — सिंगल पीस या फुल किट आपके दरवाजे पर डिलीवर की जाती है।",
+        cat_all: "सभी गेम",
+        cat_indoor: "🏠 इनडोर",
+        cat_outdoor: "🌳 आउटडोर",
+        cat_new: "🆕 नया",
+        cat_board: "🎲 बोर्ड",
+        cat_fit: "💪 फिटनेस",
+        cat_water: "🌊 जल",
+        cat_kids: "👶 बच्चे",
+        sidebar_profile: "👤 प्रोफाइल",
+        sidebar_orders: "📦 मेरे ऑर्डर",
+        sidebar_lang: "🌐 भाषा चुनें",
+        sidebar_logout: "🚪 लॉग आउट"
+      },
+      te: {
+        hero_badge: "🎮 ప్రీమియం గేమ్ రెంటల్స్",
+        hero_title: "ఏ గేమ్‌నైనా అద్దెకు తీసుకోండి<br>ఎప్పుడైనా",
+        hero_sub: "ప్రతి సందర్భానికి ఇండోర్ & అవుట్‌డోర్ గేమ్స్ — సింగిల్ పీసెస్ లేదా ఫుల్ కిట్స్ మీ ఇంటికే డెలివరీ చేయబడతాయి.",
+        cat_all: "అన్ని ఆటలు",
+        cat_indoor: "🏠 ఇండోర్",
+        cat_outdoor: "🌳 అవుట్‌డోర్",
+        cat_new: "🆕 కొత్తవి",
+        cat_board: "🎲 బోర్డ్",
+        cat_fit: "💪 ఫిట్‌నెస్",
+        cat_water: "🌊 వాటర్",
+        cat_kids: "👶 పిల్లలు",
+        sidebar_profile: "👤 ప్రొఫైల్",
+        sidebar_orders: "📦 నా ఆర్డర్లు",
+        sidebar_lang: "🌐 భాషను ఎంచుకోండి",
+        sidebar_logout: "🚪 లాగ్ అవుట్"
+      },
+      ta: {
+        hero_badge: "🎮 பிரீமியம் விளையாட்டு வாடகை",
+        hero_title: "எந்த விளையாட்டையும் வாடகைக்கு எடுக்கலாம்<br>எந்த நேரத்திலும்",
+        hero_sub: "ஒவ்வொரு சந்தர்ப்பத்திற்கும் உட்புற மற்றும் வெளிப்புற விளையாட்டுகள் — ஒற்றை துண்டுகள் அல்லது முழு கருவிகள் உங்கள் வீட்டு வாசலில் வழங்கப்படும்.",
+        cat_all: "அனைத்து விளையாட்டுகள்",
+        cat_indoor: "🏠 உட்புறம்",
+        cat_outdoor: "🌳 வெளிப்புறம்",
+        cat_new: "🆕 புதியது",
+        cat_board: "🎲 பலகை",
+        cat_fit: "💪 உடற்தகுதி",
+        cat_water: "🌊 நீர்",
+        cat_kids: "👶 குழந்தைகள்",
+        sidebar_profile: "👤 சுயவிவரம்",
+        sidebar_orders: "📦 எனது ஆர்டர்கள்",
+        sidebar_lang: "🌐 மொழியைத் தேர்ந்தெடுக்கவும்",
+        sidebar_logout: "🚪 வெளியேறு"
+      },
+      kn: {
+        hero_badge: "🎮 ಪ್ರೀಮಿಯಂ ಗೇಮ್ ಬಾಡಿಗೆ",
+        hero_title: "ಯಾವುದೇ ಆಟವನ್ನು ಬಾಡಿಗೆಗೆ ಪಡೆಯಿರಿ<br>ಯಾವಾಗಲಾದರೂ",
+        hero_sub: "ಪ್ರತಿ ಸಂದರ್ಭಕ್ಕೂ ಒಳಾಂಗಣ ಮತ್ತು ಹೊರಾಂಗಣ ಆಟಗಳು — ಒಂದೇ ತುಣುಕುಗಳು ಅಥವಾ ಪೂರ್ಣ ಕಿಟ್‌ಗಳನ್ನು ನಿಮ್ಮ ಮನೆಬಾಗಿಲಿಗೆ ತಲುಪಿಸಲಾಗುತ್ತದೆ.",
+        cat_all: "ಎಲ್ಲಾ ಆಟಗಳು",
+        cat_indoor: "🏠 ಒಳಾಂಗಣ",
+        cat_outdoor: "🌳 ಹೊರಾಂಗಣ",
+        cat_new: "🆕 ಹೊಸದು",
+        cat_board: "🎲 ಬೋರ್ಡ್",
+        cat_fit: "💪 ಫಿಟ್ನೆಸ್",
+        cat_water: "🌊 ನೀರು",
+        cat_kids: "👶 ಮಕ್ಕಳು",
+        sidebar_profile: "👤 ಪ್ರೊಫೈಲ್",
+        sidebar_orders: "📦 ನನ್ನ ಆರ್ಡರ್‌ಗಳು",
+        sidebar_lang: "🌐 ಭಾಷೆಯನ್ನು ಆರಿಸಿ",
+        sidebar_logout: "🚪 ಲಾಗ್ ಔಟ್"
+      },
+      ml: {
+        hero_badge: "🎮 പ്രീമിയം ഗെയിം റെന്റലുകൾ",
+        hero_title: "ഏത് ഗെയിമും വാടകയ്ക്ക് എടുക്കാം<br>എപ്പോൾ വേണമെങ്കിലും",
+        hero_sub: "എല്ലാ അവസരങ്ങൾക്കും ഇൻഡോർ & ഔട്ട്ഡോർ ഗെയിമുകൾ — സിംഗിൾ പീസുകളോ ഫുൾ കിറ്റുകളോ നിങ്ങളുടെ വീട്ടിലെത്തിക്കുന്നു.",
+        cat_all: "എല്ലാ ഗെയിമുകളും",
+        cat_indoor: "🏠 ഇൻഡോർ",
+        cat_outdoor: "🌳 ഔട്ട്ഡോർ",
+        cat_new: "🆕 പുതിയത്",
+        cat_board: "🎲 ബോർഡ്",
+        cat_fit: "💪 ഫിറ്റ്നസ്",
+        cat_water: "🌊 ജലം",
+        cat_kids: "👶 കുട്ടികൾ",
+        sidebar_profile: "👤 പ്രൊഫൈൽ",
+        sidebar_orders: "📦 എന്റെ ഓർഡറുകൾ",
+        sidebar_lang: "🌐 ഭാഷ തിരഞ്ഞെടുക്കുക",
+        sidebar_logout: "🚪 ലോഗ് ഔട്ട്"
+      }
+    };
+
+    let currentLang = localStorage.getItem('rpLang') || 'en';
+
+    function openLanguage() {
+      // Close sidebar first without animation conflict
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('show');
+      sidebarOverlay.classList.remove('show');
+
+      const overlay = document.getElementById('langOverlay');
+      const modal = document.getElementById('langModal');
+      // Reset to start position (off-screen left)
+      modal.style.transition = 'none';
+      modal.style.transform = 'translateX(-100%)';
+      overlay.classList.add('show');
+      // Trigger slide-in from left
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          modal.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+          modal.style.transform = 'translateX(0)';
+        });
+      });
+      updateLangUISelection();
+    }
+
+    function closeLanguage() {
+      const modal = document.getElementById('langModal');
+      const overlay = document.getElementById('langOverlay');
+      modal.style.transform = 'translateX(-100%)';
+      setTimeout(() => {
+        overlay.classList.remove('show');
+      }, 400);
+    }
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('rpLang', lang);
+      applyTranslations();
+      updateLangUISelection();
+      setTimeout(closeLanguage, 300);
+    }
+
+    function applyTranslations() {
+      // Use the external translations object from language-translations.js
+      const T = (typeof translations !== 'undefined' ? translations : {})[currentLang] || {};
+      if (!Object.keys(T).length) return;
+
+      // 1. Translate all [data-t] static elements
+      document.querySelectorAll('[data-t]').forEach(el => {
+        const key = el.getAttribute('data-t');
+        if (T[key] !== undefined) {
+          el.innerHTML = T[key];
+        }
+      });
+
+      // 2. Translate game cards currently in the DOM
+      document.querySelectorAll('.card[data-game-id]').forEach(card => {
+        const id = card.getAttribute('data-game-id');
+        const nameKey = 'item_' + id;
+        if (T[nameKey]) {
+          const nameEl = card.querySelector('.card-name');
+          if (nameEl) nameEl.textContent = T[nameKey];
+        }
+      });
+
+      // 3. Translate the GAMES array names for future card renders
+      if (typeof GAMES !== 'undefined') {
+        GAMES.forEach(g => {
+          const key = 'item_' + g.id;
+          if (T[key]) g._localName = T[key];
+          else g._localName = g.name;
+        });
+      }
+
+      // 4. Translate category filter buttons
+      const catMap = {
+        '': 'cat_all', 'indoor': 'cat_indoor', 'outdoor': 'cat_outdoor',
+        'board': 'cat_board', 'kids': 'cat_kids', 'fitness': 'cat_fitness',
+        'new': 'cat_new', 'water': 'cat_water', 'fit': 'cat_fit'
+      };
+      document.querySelectorAll('.filter-btn[data-cat]').forEach(btn => {
+        const cat = btn.getAttribute('data-cat');
+        if (catMap[cat] && T[catMap[cat]]) btn.textContent = T[catMap[cat]];
+      });
+
+      // 5. Translate search placeholder
+      const searchInp = document.getElementById('searchInput');
+      if (searchInp && T.search_placeholder) {
+        searchInp.placeholder = T.search_placeholder;
+      }
+    }
+
+    function updateLangUISelection() {
+      document.querySelectorAll('.lang-item').forEach(el => el.classList.remove('selected'));
+      const activeItem = document.querySelector(`[onclick="changeLanguage('${currentLang}')"]`);
+      if (activeItem) activeItem.classList.add('selected');
+    }
+
+    // Initial translation apply on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTranslations();
+    });
+
+    function closeOrders() {
+      document.getElementById('ordersOverlay').classList.remove('show');
+    }
   </script>
 </body>
 
