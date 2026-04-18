@@ -2248,6 +2248,11 @@
             data-t="lbl_phonepe">📱 PhonePe</button>
         </div>
 
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted);">
+          <input type="checkbox" id="termsAccepted" required style="width: auto; margin: 0;">
+          <label for="termsAccepted">I accept the Terms & Conditions of Rental</label>
+        </div>
+
         <button type="submit" class="modal-confirm" data-t="btn_book">Book / Rent Now</button>
         <p id="bookingMsg" class="success-msg"></p>
       </form>
@@ -2344,8 +2349,10 @@
 
   <script>
     // ════════════════════════════════════════
-    // REVIEWS DATA
+    // GLOBALS
     // ════════════════════════════════════════
+    let userLat = null, userLng = null;
+
     const REVIEW_POOLS = [
       [{ author: "Chiru k.", stars: 5, text: "Excellent quality! Delivered on time and equipment was in perfect condition.", date: "2 days ago" },
       { author: "Ram k.", stars: 4, text: "Good experience overall. Will definitely rent again for our next event.", date: "1 week ago" },
@@ -3273,7 +3280,7 @@
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
-      document.getElementById('mDate').value = `${dd}-${mm}-${yyyy}`;
+      document.getElementById('mDate').value = `${yyyy}-${mm}-${dd}`;
 
       updateDayName();
 
@@ -3299,6 +3306,11 @@
       msg.className = "success-msg show";
       msg.style.color = "var(--accent)";
 
+      if (!document.getElementById('termsAccepted').checked) {
+        alert("Please accept the Terms & Conditions to proceed.");
+        return;
+      }
+
       const data = {
         userName: document.getElementById('userName').value,
         userPhone: document.getElementById('userPhone').value,
@@ -3308,10 +3320,12 @@
         bookingDate: document.getElementById('mDate').value,
         bookingDay: document.getElementById('mDay').value,
         bookingTime: document.getElementById('mTime').value,
-        duration: document.getElementById('mDuration').value,
-        total: document.getElementById('totalPrice').textContent,
+        days: document.getElementById('mDuration').value,
+        price: document.getElementById('totalPrice').textContent,
         paymentMode: currentPayment,
-        signature: document.getElementById('renterSignature').value
+        signature: document.getElementById('renterSignature').value,
+        lat: userLat,
+        lng: userLng
       };
 
       try {
@@ -3423,6 +3437,7 @@
 
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const { latitude, longitude } = pos.coords;
+        userLat = latitude; userLng = longitude;
         try {
           // Use OpenStreetMap Nominatim for reverse geocoding
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
