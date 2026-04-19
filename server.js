@@ -160,6 +160,136 @@ app.get('/api/db/:table', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+app.get('/api/delivery-boys', async (req, res) => {
+    try {
+        // Return active and pending for demo purposes
+        const result = await pool.query("SELECT * FROM delivery_boys ORDER BY id DESC");
+        res.json(result.rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/register-delivery', async (req, res) => {
+    const {
+        first_name, last_name, dob, gender, mobile, alternate_mobile, email,
+        assigned_store_id, address, city, state, pincode, landmark,
+        vehicle_type, vehicle_brand, vehicle_model, registration_number,
+        year_of_manufacture, insurance_valid_until, fuel_type, ownership,
+        work_type, experience, delivery_zones, time_slots, expected_salary,
+        languages, emergency_name, emergency_relationship, emergency_mobile,
+        bank_holder_name, account_number, ifsc_code, bank_name, upi_id, payment_preference
+    } = req.body;
+    try {
+        const result = await pool.query(
+            `INSERT INTO delivery_boys 
+            (first_name, last_name, dob, gender, mobile, alternate_mobile, email,
+             assigned_store_id, address, city, state, pincode, landmark,
+             vehicle_type, vehicle_brand, vehicle_model, registration_number,
+             year_of_manufacture, insurance_valid_until, fuel_type, ownership,
+             work_type, experience, delivery_zones, time_slots, expected_salary,
+             languages, emergency_name, emergency_relationship, emergency_mobile,
+             bank_holder_name, account_number, ifsc_code, bank_name, upi_id, payment_preference,
+             status)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,
+                    $22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,'active')
+            RETURNING id`,
+            [first_name, last_name, dob || null, gender, mobile, alternate_mobile, email,
+             assigned_store_id || null, address, city, state, pincode, landmark,
+             vehicle_type, vehicle_brand, vehicle_model, registration_number,
+             year_of_manufacture, insurance_valid_until || null, fuel_type, ownership,
+             work_type, experience, delivery_zones, time_slots, expected_salary || null,
+             languages, emergency_name, emergency_relationship, emergency_mobile,
+             bank_holder_name, account_number, ifsc_code, bank_name, upi_id, payment_preference]
+        );
+        res.json({ success: true, partnerId: result.rows[0].id });
+    } catch (err) {
+        console.error('[Register Delivery]', err.message);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/delivery-requests', async (req, res) => {
+    const { storeId } = req.query;
+    try {
+        if (!storeId || storeId === 'null') {
+            const result = await pool.query("SELECT * FROM rentals WHERE status = 'pending'");
+            return res.json(result.rows);
+        }
+        
+        const storeResult = await pool.query("SELECT lat, lng FROM stores WHERE id = $1", [storeId]);
+        if (storeResult.rows.length === 0) return res.json([]);
+        const store = storeResult.rows[0];
+        
+        const result = await pool.query(`
+            SELECT *, 
+              ( 6371 * acos( cos( radians($1) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($2) ) + sin( radians($1) ) * sin( radians( lat ) ) ) ) AS distance 
+            FROM rentals 
+            WHERE status = 'pending' AND lat IS NOT NULL AND lng IS NOT NULL
+        `, [store.lat, store.lng]);
+        
+        // Filter for distance <= 20 (kilometers)
+        const nearby = result.rows.filter(r => r.distance <= 20);
+        res.json(nearby);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/accept-delivery/:id', async (req, res) => {
+    const { id } = req.params;
+    const { partnerId, partnerName, partnerPhone } = req.body;
+    try {
+        // Atomic update to ensure only one delivery boy gets it
+        const result = await pool.query(`
+            UPDATE rentals 
+            SET status = 'assigned', track_status = 'assigned', delivery_boy_name = $1, delivery_boy_phone = $2 
+            WHERE id = $3 AND status = 'pending' 
+            RETURNING *
+        `, [partnerName, partnerPhone, id]);
+        
+        if (result.rows.length > 0) {
+            res.json({ success: true, order: result.rows[0] });
+        } else {
+            res.json({ success: false, message: 'Request already accepted by another partner.' });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/api/my-trips', async (req, res) => {
+    const { partnerId } = req.query;
+    try {
+        // Since we didn't save partnerId in rentals, we look up the partner's phone
+        const partnerRes = await pool.query("SELECT mobile FROM delivery_boys WHERE id = $1", [partnerId]);
+        if (partnerRes.rows.length === 0) return res.json([]);
+        const phone = partnerRes.rows[0].mobile;
+
+        const result = await pool.query("SELECT * FROM rentals WHERE delivery_boy_phone = $1 AND status != 'delivered' AND status != 'returned' ORDER BY id DESC", [phone]);
+        res.json(result.rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/update-tracking/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+        const result = await pool.query("UPDATE rentals SET track_status = $1 WHERE id = $2 RETURNING *", [status, id]);
+        res.json({ success: true, order: result.rows[0] });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+app.get('/api/booking-status/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query("SELECT status, track_status, delivery_boy_name, delivery_boy_phone FROM rentals WHERE id = $1", [id]);
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        } else {
+            res.status(404).json({ error: 'Not found' });
+        }
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.get('/db-explorer', (req, res) => res.sendFile(path.join(__dirname, 'db_explorer.html')));
 
 app.use(express.static('./'));
