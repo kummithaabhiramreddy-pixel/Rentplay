@@ -4025,13 +4025,12 @@
       // Format amount to 2 decimal places for UPI consistency
       const formattedAmount = amount.toFixed(2);
 
-      const vpa = "7093910280@upi"; 
+      const vpa = "7093910280@ybl"; 
       const merchantName = "RentPlay";
-      const itemName = document.getElementById('itemName').value || "Game Rental";
-      const transactionNote = `Rent: ${itemName}`;
+      const transactionNote = "Item Rental";
       
-      // Standard UPI URL construction
-      const upiUrl = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+      // Minimal UPI URL for maximum compatibility with personal accounts
+      const upiUrl = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&tn=${encodeURIComponent(transactionNote)}`;
 
       console.log(`Dynamic Redirect: ${upiUrl}`);
       
