@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RentPlay – Rent Anything Near You</title>
+<title>GearGo – Rent Anything Near You</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
 
 <!-- Google Identity Services SDK — Real Google OAuth -->
@@ -243,7 +243,7 @@
 
 <!-- REDIRECT OVERLAY -->
 <div class="redirect-overlay" id="redirectOverlay">
-  <div class="redirect-logo">Rent<span>Play</span></div>
+  <div class="redirect-logo">Gear<span>Go</span></div>
   <div class="redirect-spinner"></div>
   <div class="redirect-msg" id="redirectMsg">Sign in successful — loading Search page…</div>
   <div class="redirect-bar-track"><div class="redirect-bar-fill" id="redirectBar"></div></div>
@@ -275,7 +275,7 @@
 
 <!-- NAV (Page 1 style — hamburger) -->
 <nav>
-  <div class="logo" onclick="window.location.href='index.html'">Rent<span>Play</span></div>
+  <div class="logo" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
   <div class="nav-right">
     <div id="navAuthBtns" style="display:flex;gap:12px;align-items:center;">
       <button class="btn btn-ghost" onclick="openSignin()">Sign In</button>
@@ -360,13 +360,13 @@
 <br><br>
 
 <footer>
-  <div class="logo" style="font-size:1.1rem">Rent<span style="color:var(--accent)">Play</span></div>
+  <div class="logo" style="font-size:1.1rem">Gear<span style="color:var(--accent)">Go</span></div>
   <div style="display:flex;gap:18px">
     <a href="Terms&conditions.html" style="color:var(--muted);text-decoration:none">T&amp;C</a>
     <a href="Privacy.html" style="color:var(--muted);text-decoration:none">Privacy</a>
     <a href="Support.html" style="color:var(--muted);text-decoration:none">Support</a>
   </div>
-  <div>© 2026 RentPlay · Rent smart, play more.</div>
+  <div>© 2026 GearGo · Rent smart, play more.</div>
 </footer>
 
 <!-- ══════════════════════════════════════
@@ -377,7 +377,7 @@
     <button class="modal-close" onclick="closeSignup()">✕</button>
     <div class="modal-eyebrow green">✦ STEP 1 — START HERE</div>
     <div class="modal-title">Create Account</div>
-    <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on RentPlay.</div>
+    <div class="modal-sub">Sign up to unlock rentals, track deliveries, and list your own items on GearGo.</div>
     <div class="dup-bar" id="dupBar">
       ⚠️ This email is already registered. <a onclick="closeSignup();setTimeout(openSignin,220)">Sign In instead →</a>
     </div>
@@ -433,7 +433,7 @@
     <div style="text-align:right;margin-top:-6px;margin-bottom:14px;">
       <a onclick="openForgotPassword()" style="font-size:0.78rem;color:var(--accent3);cursor:pointer;text-decoration:none;font-weight:600;">Forgot Password?</a>
     </div>
-    <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to RentPlay →</button>
+    <button class="modal-submit submit-yellow" onclick="handleSignin()">Sign In to GearGo →</button>
 
     <div class="separator">or</div>
     <button class="btn-google" onclick="handleGoogleAuth()">
@@ -486,7 +486,7 @@
       <div class="modal-sub">A reset code has been sent to your registered contact.</div>
       <div class="email-preview" id="fpEmailPreview" style="display:none;">
         <div class="ep-to">To: <span id="fpEmailDisplay">—</span></div>
-        <div class="ep-body">Hi there! Here is your RentPlay password reset code. It expires in 10 minutes.</div>
+        <div class="ep-body">Hi there! Here is your GearGo password reset code. It expires in 10 minutes.</div>
         <div class="ep-code" id="fpCodeDisplay" style="display:none;">——</div>
         <div class="ep-note" id="fpSimMsg">⚠️ Real service is active. Check your inbox/messages.</div>
       </div>
@@ -535,7 +535,7 @@ const GOOGLE_CLIENT_ID = '440675514682-lng0e1v467junk79btos6fvdbbuht0jv.apps.goo
 /* ─────────────────────────────────────────────────
    STORAGE
 ───────────────────────────────────────────────── */
-const STORE_KEY = 'rentplay_accounts_v2';
+const STORE_KEY = 'geargo_accounts_v2';
 function getAllAccounts() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { return {}; } }
 function saveAllAccounts(obj) { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
 function getAccountByEmail(email) { return getAllAccounts()[email.toLowerCase().trim()] || null; }
