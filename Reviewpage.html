@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RentPlay — Reviews</title>
+<title>GearGo — Reviews</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -145,7 +145,7 @@ nav a:hover{color:var(--text)}
 <body>
 
 <header>
-  <div class="logo" style="cursor: pointer;" onclick="window.location.href='index.html'">Rent<span>Play</span></div>
+  <div class="logo" style="cursor: pointer;" onclick="window.location.href='index.html'">Gear<span>Go</span></div>
   <nav>
     <a href="">Browse</a>
     <a href="">Categories</a>
@@ -157,7 +157,7 @@ nav a:hover{color:var(--text)}
 
 <section class="hero">
   <div class="hero-label">Community Reviews</div>
-  <h1>What renters are saying about <em>RentPlay</em></h1>
+  <h1>What renters are saying about <em>GearGo</em></h1>
   <p>Real experiences from real people. Every review is submitted by our community — nothing pre-filled, nothing fake.</p>
 </section>
 
@@ -281,7 +281,7 @@ nav a:hover{color:var(--text)}
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE = 'rentplay_reviews_v2';
+const STORE = 'geargo_dashboard_reviews';
 const HINTS = ['','Terrible 😞','Poor 😕','Average 😐','Good 😊','Excellent! 🎉'];
 const COLORS = ['#2d1f6e','#1a3a2e','#3a1a1a','#3a2e10','#1a2e3a','#2e1a3a','#1f2d3a','#3a1a2e','#1a2f1a','#2e2b1a'];
 let activeFilter = 'all';
@@ -291,8 +291,7 @@ let rating = 0;
 let cachedReviews = [];
 let serverOnline = true;
 const isLocalHTML = window.location.protocol === 'file:';
-const apiBase = ''; 
-
+const apiBase = (window.location.port === '3005') ? '' : 'http://localhost:3005';
 const SAMPLE_REVIEWS = [
   { id: 1, name: 'Aarav Sharma', city: 'Mumbai', category: 'Board Games', title: 'Great rental experience', body: 'The console arrived on time and the team was very responsive.', rating: 5, tags: ['PS5','Fast Delivery'], helpful: 12, created_at: new Date(Date.now() - 86400000).toISOString() },
   { id: 2, name: 'Nisha Patel', city: 'Bengaluru', category: 'Outdoor', title: 'Smooth booking process', body: 'Loved the easy checkout and the gear quality was excellent.', rating: 4, tags: ['Outdoor','Comfortable'], helpful: 8, created_at: new Date(Date.now() - 172800000).toISOString() }
@@ -311,11 +310,7 @@ function saveLocalReviews(){
 }
 
 async function fetchReviews() {
-    if (isLocalHTML) {
-        serverOnline = false;
-        cachedReviews = loadLocalReviews();
-        return;
-    }
+    console.log('Fetching reviews from:', apiBase || 'local');
 
     try {
         const res = await fetch(`${apiBase}/api/reviews`);
@@ -391,7 +386,7 @@ function renderReviews(){
     sec.innerHTML=`<div class="empty-state">
       <div class="empty-icon">📋</div>
       <h3>No reviews yet</h3>
-      <p>Be the very first to share your RentPlay experience with the community!</p>
+      <p>Be the very first to share your GearGo experience with the community!</p>
       <button class="empty-cta" onclick="openModal()">Write the First Review →</button>
     </div>`;
     return;
@@ -461,7 +456,7 @@ async function upvote(btn,id){
 
 /* modal */
 /* storage for user */
-const STORE_KEY = 'rentplay_account';
+const STORE_KEY = 'geargo_account';
 function getAccount() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || null; } catch(e) { return null; } }
 
 function openModal(){ 
@@ -549,7 +544,7 @@ async function submitReview(){
   cachedReviews.unshift(review);
   saveLocalReviews();
 
-  if(isLocalHTML || !serverOnline){
+  if(!serverOnline){
      updateStats();
      renderReviews();
      closeModal();
