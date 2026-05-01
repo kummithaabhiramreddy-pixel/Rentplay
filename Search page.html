@@ -2159,12 +2159,11 @@
     <div id="currentStoreName"></div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search student equipment, kits, gear..." oninput="filterItems()"
+      <input type="text" id="searchInput" placeholder="Search student equipment..." oninput="filterItems()"
         autocomplete="off" />
       <div class="search-actions">
         <button class="search-btn" type="button" title="Use camera" onclick="startScanner()">📷</button>
         <button class="search-btn" type="button" title="Voice search" onclick="startVoiceSearch()">🎙️</button>
-        <button class="search-btn" type="button" title="Scan QR" onclick="startScanner()">🔳</button>
       </div>
     </div>
     <div class="result-count" id="resultCount"></div>
@@ -2175,7 +2174,7 @@
   <div class="filters">
     <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
     <button class="filter-btn" onclick="setFilter('student',this)">🎓 Student Equipment</button>
-    <button class="filter-btn" onclick="setFilter('general',this)">⚽ Sports, Items & Electronics</button>
+
   </div>
 
   <div id="hubSelectionMessage" style="display: none;">
