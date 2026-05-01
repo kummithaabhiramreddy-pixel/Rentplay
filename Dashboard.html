@@ -1688,7 +1688,7 @@
       const label = SECTION_LABELS[sec];
       const t = new Date().toISOString();
       document.getElementById('lock-terminal').innerHTML =
-        `<span class="t-dim">[RENTPLAY_ADMIN_SYS v2.4.1]</span><br>` +
+        `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
         `<span class="t-cyan">$ access_request --section=${sec.toUpperCase()}</span><br>` +
         `<span class="t-dim">timestamp=${t}</span><br>` +
         `<span class="t-red">ERR: 403 SECTION_TOKEN_REQUIRED</span><br>` +
@@ -1772,7 +1772,7 @@
       const hash = await _sha256(raw);
 
       document.getElementById('lock-terminal').innerHTML =
-        `<span class="t-dim">[RENTPLAY_ADMIN_SYS v2.4.1]</span><br>` +
+        `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
         `<span class="t-cyan">$ verifying token for [${SECTION_LABELS[sec]}]...</span><br>` +
         `<span class="t-dim">computed_hash=${hash.slice(0, 28)}...</span><br>` +
         `<span class="t-yellow">⏳ comparing against section hash...</span>`;
@@ -1804,7 +1804,7 @@
         const left = MAX_FAIL - fails;
 
         document.getElementById('lock-terminal').innerHTML =
-          `<span class="t-dim">[RENTPLAY_ADMIN_SYS v2.4.1]</span><br>` +
+          `<span class="t-dim">[GEARGO_ADMIN_SYS v2.4.1]</span><br>` +
           `<span class="t-red">ERR: TOKEN_MISMATCH — invalid section token</span><br>` +
           `<span class="t-red">SECURITY: ${fails} failed attempt(s) on [${SECTION_LABELS[sec]}]</span><br>` +
           `<span class="t-yellow">⚠ ${left} attempt(s) remaining before lockout</span>`;
@@ -1886,9 +1886,9 @@
     //  PARTNER / REVIEW DATA & UI
     // ════════════════════════════════════
     let allPartners = [], allReviews = [], allRentals = [], selId = null, selName = '', contextTargetType = 'partner';
-    const DASHBOARD_BOOKING_KEY = 'rentplay_dashboard_bookings';
-    const DASHBOARD_PARTNER_KEY = 'rentplay_dashboard_partners';
-    const DASHBOARD_REVIEW_KEY = 'rentplay_dashboard_reviews';
+    const DASHBOARD_BOOKING_KEY = 'geargo_dashboard_bookings';
+    const DASHBOARD_PARTNER_KEY = 'geargo_dashboard_partners';
+    const DASHBOARD_REVIEW_KEY = 'geargo_dashboard_reviews';
 
     const SAMPLE_DASHBOARD_RENTALS = [
       { id: 1, name: 'Riya Singh', phone: '9876543210', email: 'riya@example.com', item: 'Gaming Console', price: 1200, status: 'active', booking_date: new Date(Date.now() - 86400000).toISOString(), booking_time: '10:00 AM', days: 3, address: 'MG Road, Bengaluru', signature: 'Riya Singh', pickup_location: 'Warehouse 1', dropoff_location: 'Customer Address', duration: '3 days', agreement_terms: 'Standard rental agreement applies.' },
