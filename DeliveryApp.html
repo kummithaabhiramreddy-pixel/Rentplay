@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Boy Partner App - RentPlay</title>
+    <title>Delivery Boy Partner App - GearGo</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
@@ -420,7 +420,7 @@
         let pollInterval;
 
         const isLocalHTML = !window.location.hostname || window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-        const apiBase = isLocalHTML ? 'http://localhost:3005' : '';
+        const apiBase = (window.location.port === '3005') ? '' : 'http://localhost:3005';
 
         // Auto-fetch delivery boys for demo login
         async function fetchPartners() {
@@ -525,7 +525,7 @@
                     <div class="order-details">
                         <div class="detail-row">
                             <span class="material-icons-outlined">storefront</span>
-                            <div class="detail-text"><b>Pickup:</b> ${order.store_name || 'RentPlay Hub'} <br> <span style="font-size: 0.85rem; color: var(--text-light)">${order.store_address || order.store_location || 'Address pending'}</span></div>
+                            <div class="detail-text"><b>Pickup:</b> ${order.store_name || 'GearGo Hub'} <br> <span style="font-size: 0.85rem; color: var(--text-light)">${order.store_address || order.store_location || 'Address pending'}</span></div>
                         </div>
                         <div class="detail-row">
                             <span class="material-icons-outlined">person</span>
