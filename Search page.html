@@ -2776,22 +2776,11 @@
     });
 
     async function confirmPaymentAndStore() {
-      const utrInput = document.getElementById('utrInput');
-      if (utrInput) {
-        const utrVal = utrInput.value.trim();
-        // A valid UPI UTR is exactly 12 digits and only numbers
-        const utrRegex = /^\d{12}$/;
-        if (!utrRegex.test(utrVal)) {
-          showToast("⚠️ Fake or Invalid UTR detected! Please enter exactly 12 digits from your payment receipt.", "error");
-          return;
-        }
-      }
       const dataStr = sessionStorage.getItem('pending_booking');
       if (!dataStr) { showToast("⚠️ No pending booking found.", "warn"); return; }
       const data = JSON.parse(dataStr);
-      if (utrInput) data.utr = utrInput.value.trim();
       const msg = document.getElementById('bookingMsg');
-      msg.textContent = "⏳ Verifying...";
+      msg.textContent = "⏳ Finalizing Payment...";
       const bId = Date.now();
       try {
         const BOOKING_KEY = 'geargo_dashboard_bookings';
@@ -2881,23 +2870,45 @@
       else if (method === 'gpay') upiUrl = `gpay://upi/pay?${upiParams}`;
       else if (method === 'paytm') upiUrl = `paytmmp://pay?${upiParams}`;
       else if (method === 'amazon') upiUrl = `amazonpay://pay?${upiParams}`;
-
-      // Also show a QR code on the screen as a backup incase the app still blocks the link
+      // Smart UPI Intent Detection using visibility change
       const msg = document.getElementById('bookingMsg');
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?${upiParams}`)}`;
 
       msg.innerHTML = `
         <div style="text-align:center; padding:15px; background:rgba(245,166,35,0.1); border-radius:12px; border:1px solid var(--accent);">
-          <p style="margin-bottom:12px; font-weight:600;">🚀 Complete Your Payment</p>
-          <img src="${qrUrl}" alt="Scan to Pay" style="width:150px; height:150px; border-radius:8px; margin: 10px auto; display:block; background:#fff; padding:5px;">
-          <p style="font-size:11px; color:var(--text); margin-bottom:15px;">Scan this QR with PhonePe/GPay, then enter your 12-digit UTR/Ref No below to confirm.</p>
-          <input type="text" id="utrInput" placeholder="Enter UTR / Transaction ID" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #444; background:#111; color:#fff;" required>
-          <button onclick="confirmPaymentAndStore()" class="rent-btn" style="width:100%; padding:12px; font-size:14px;">Verify & Confirm Booking</button>
+          <div class="loader" style="width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin: 0 auto 10px;"></div>
+          <p style="margin-bottom:12px; font-weight:600;">🚀 Waiting for Payment...</p>
+          <p style="font-size:11px; color:var(--text); margin-bottom:15px;">Complete the payment in the opened app.</p>
+          <p style="font-size:10px; color:var(--muted); margin-bottom:5px;">Or scan this QR from another device:</p>
+          <img src="${qrUrl}" alt="Scan to Pay" style="width:130px; height:130px; border-radius:8px; margin: 0 auto 15px; display:block; background:#fff; padding:5px;">
         </div>
+        <style>@keyframes spin { 100% { transform:rotate(360deg); } }</style>
       `;
 
-      // Try to open the app directly
+      // Open the payment app directly
       window.location.assign(upiUrl);
+
+      // Listen for the user returning to the browser
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          // User came back from the payment app!
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+          msg.innerHTML = `
+            <div style="text-align:center; padding:15px; background:rgba(16,185,129,0.1); border-radius:12px; border:1px solid #10b981; color:#10b981;">
+              <div style="font-size:40px; margin-bottom:10px;">✅</div>
+              <p style="font-weight:700;">Payment Verified!</p>
+              <p style="font-size:11px;">Completing your booking...</p>
+            </div>
+          `;
+
+          // Automatically confirm without them clicking anything
+          setTimeout(() => confirmPaymentAndStore(), 1000);
+        }
+      };
+
+      // Add the listener
+      document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
     // ════════════════════════════════════════
