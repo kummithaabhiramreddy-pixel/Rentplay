@@ -1333,7 +1333,29 @@
     function triggerUPIPayment(method) {
       const amount = parseFloat(document.getElementById('totalPrice').textContent.replace(/[₹,]/g,'').trim());
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
-      const upiUrl = `upi://pay?pa=7093910280@ybl&pn=GearGo&cu=INR&am=${amount.toFixed(2)}&tn=Item+Rental`;
+      
+      const upiParams = `pa=7093910280@ybl&pn=GearGo&cu=INR&am=${amount.toFixed(2)}&tn=Item+Rental`;
+      let upiUrl = `upi://pay?${upiParams}`; // Fallback generic
+      
+      if (method === 'phonepe') upiUrl = `phonepe://pay?${upiParams}`;
+      else if (method === 'gpay') upiUrl = `gpay://upi/pay?${upiParams}`;
+      else if (method === 'paytm') upiUrl = `paytmmp://pay?${upiParams}`;
+      else if (method === 'amazon') upiUrl = `amazonpay://pay?${upiParams}`;
+      
+      // Also show a QR code on the screen as a backup incase the app still blocks the link
+      const msg = document.getElementById('bookingMsg');
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?${upiParams}`)}`;
+      
+      msg.innerHTML = `
+        <div style="text-align:center; padding:15px; background:rgba(245,166,35,0.1); border-radius:12px; border:1px solid var(--accent);">
+          <p style="margin-bottom:12px; font-weight:600;">🚀 Opening Payment App...</p>
+          <img src="${qrUrl}" alt="Scan to Pay" style="width:150px; height:150px; border-radius:8px; margin: 10px auto; display:block; background:#fff; padding:5px;">
+          <p style="font-size:11px; color:var(--muted); margin-bottom:15px;">If the app didn't open or payment failed, you can scan this QR code.</p>
+          <button onclick="confirmPaymentAndStore()" class="rent-btn" style="width:100%; padding:12px; font-size:14px;">I Have Paid Successfully</button>
+        </div>
+      `;
+
+      // Try to open the app directly
       window.location.assign(upiUrl);
     }
 
