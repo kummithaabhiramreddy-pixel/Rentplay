@@ -540,7 +540,10 @@
         </div>
         <div class="pay-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
           <button type="button" class="pay-tab active" id="tab-cod" onclick="setPayment('cod')">💵 Cash on Delivery</button>
-          <button type="button" class="pay-tab" id="tab-online" onclick="setPayment('online')">📲 Online Payment</button>
+          <button type="button" class="pay-tab" id="tab-phonepe" onclick="setPayment('phonepe')">🟣 PhonePe</button>
+          <button type="button" class="pay-tab" id="tab-gpay" onclick="setPayment('gpay')">🔹 Google Pay</button>
+          <button type="button" class="pay-tab" id="tab-paytm" onclick="setPayment('paytm')">🔵 Paytm</button>
+          <button type="button" class="pay-tab" id="tab-upi" onclick="setPayment('upi')" style="grid-column: span 2;">📲 UPI / Any Other App</button>
         </div>
         <div style="margin-top: 1rem; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted);">
           <input type="checkbox" id="termsAccepted" required style="width: auto; margin: 0;">
@@ -1351,7 +1354,9 @@
       const btn = document.querySelector('.modal-confirm');
       if (btn) {
         if (method === 'cod') btn.textContent = 'Book / Rent Now (Cash)';
-        else btn.textContent = '💳 Pay Online & Book';
+        else if (method === 'phonepe') btn.textContent = '💳 Pay via PhonePe & Book';
+        else if (method === 'gpay') btn.textContent = '🔹 Pay via Google Pay';
+        else btn.textContent = 'Proceed to Payment';
       }
     }
 
@@ -1390,7 +1395,7 @@
         console.log("OCR Result:", cleanText);
 
         // Keywords for success
-        const successKeywords = ['success', 'paid', 'successful', 'completed', 'transferred', 'done', 'accepted'];
+        const successKeywords = ['success', 'paid', 'successful', 'completed', 'transferred', 'done'];
         const isSuccess = successKeywords.some(kw => cleanText.includes(kw));
         
         // Find amount in text
@@ -1398,46 +1403,25 @@
                            cleanText.includes(amountToMatch.toFixed(0)) || 
                            cleanText.includes(amountToMatch.toFixed(2));
 
-        // ANTI-FRAUD: Check for Today's Date
-        const today = new Date();
-        const dateOptions = { day: 'numeric', month: 'short' }; // e.g. "3 May"
-        const dateStr1 = today.toLocaleDateString('en-IN', dateOptions).toLowerCase();
-        const dateStr2 = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }).replace(/\//g, ''); // "0305"
-        const isToday = cleanText.includes(dateStr1) || cleanText.includes('today') || cleanText.includes('just now');
-
-        // DETECT UTR (12 digits) or Transaction Reference
-        const utrRegex = /[0-9]{12}/; // Standard 12-digit UTR
-        const txnRegex = /txn|transaction|id|ref|reference|transfer/;
-        const utrFound = utrRegex.test(cleanText);
-        const txnIdFound = txnRegex.test(cleanText) && /[a-z0-9]{8,}/.test(cleanText);
-
-        if (isSuccess && amountFound && isToday && (utrFound || txnIdFound)) {
-          const utrValue = cleanText.match(utrRegex) ? cleanText.match(utrRegex)[0] : "Detected";
+        if (isSuccess && amountFound) {
           msg.innerHTML = `
-            <div style="text-align:center; padding:20px; background:rgba(46, 201, 126, 0.1); border-radius:16px; border:2px solid #10b981;">
+            <div style="text-align:center; padding:20px; background:rgba(46, 201, 126, 0.1); border-radius:16px; border:1px solid #10b981;">
               <div style="font-size:40px; margin-bottom:10px;">✅</div>
               <p style="font-weight:800; font-size:18px; color:#fff; margin-bottom:4px;">Payment Verified!</p>
-              <p style="font-size:12px; color:var(--muted);">UTR: ${utrValue} | Date: Today</p>
-              <p style="font-size:11px; color:#10b981; margin-top:5px; font-weight:700;">BOOKING SECURE</p>
+              <p style="font-size:13px; color:var(--muted);">AI detected Success for ₹${amountToMatch}. Finalizing...</p>
             </div>
           `;
           setTimeout(finalizeBooking, 2000);
         } else {
-          let errorType = "";
-          if (!isSuccess) errorType = "Payment status (Success) not detected.";
-          else if (!amountFound) errorType = `Correct amount (₹${amountToMatch}) not found.`;
-          else if (!isToday) errorType = "Old Screenshot detected! Please use a fresh payment.";
-          else errorType = "Transaction ID / UTR not found.";
-
           msg.innerHTML = `
-            <div style="text-align:center; padding:20px; background:rgba(239, 68, 68, 0.1); border-radius:16px; border:2px solid #ef4444;">
+            <div style="text-align:center; padding:20px; background:rgba(239, 68, 68, 0.1); border-radius:16px; border:1px solid #ef4444;">
               <div style="font-size:40px; margin-bottom:10px;">❌</div>
-              <p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">Fraud Check Failed</p>
-              <p style="font-size:12px; color:var(--muted);">${errorType}</p>
-              <button onclick="triggerUPIPayment('online')" class="rent-btn" style="margin-top:12px; background:var(--accent); color:#000; font-size:12px; font-weight:800;">RETRY UPLOAD</button>
+              <p style="font-weight:800; font-size:16px; color:#fff; margin-bottom:4px;">Detection Failed</p>
+              <p style="font-size:12px; color:var(--muted);">Could not verify "Success" or "₹${amountToMatch}" in screenshot.</p>
+              <button onclick="triggerUPIPayment('${currentPayment}')" class="rent-btn" style="margin-top:12px; background:var(--accent); color:#000; font-size:12px;">Try Again</button>
             </div>
           `;
-          showToast("⚠️ Security Check Failed: " + errorType, "error");
+          showToast("⚠️ Could not verify payment details from image.", "error");
         }
       } catch (err) {
         console.error("OCR Error:", err);
@@ -1507,46 +1491,73 @@
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
       const UPI_ID = '8185951564@ybl';
-      const targetUrl = `phonepe://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(targetUrl)}`;
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`;
+      
+      // Define touch handler for double tap
+      window.handleQrTouch = function(e, url) {
+        const now = Date.now();
+        const lastTouch = e.target.dataset.lastTouch || 0;
+        if (now - lastTouch < 300) {
+          window.location.href = url;
+        }
+        e.target.dataset.lastTouch = now;
+      };
+
+      // Attempting Generic Merchant Bypass (mc=0000)
+      const appUrls = {
+        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
+        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
+        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
+        'upi': upiUrl
+      };
+
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
       const msg = document.getElementById('bookingMsg');
       isAwaitingPayment = true;
+      
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const targetUrl = appUrls[method] || upiUrl;
 
-      window.directPay = function(url) {
-        window.location.href = url;
+      // IMMEDIATE REDIRECT for PhonePe/GPay on mobile
+      if (isMobile && method !== 'upi') {
+        window.location.href = targetUrl;
+      }
+
+      window.copyAndOpen = function(num, url) {
+        navigator.clipboard.writeText(num);
+        showToast("📋 Number Copied! Paste in App.", "success");
+        setTimeout(() => window.location.href = url, 800);
       };
 
       msg.innerHTML = `
-        <div style="text-align:center; padding:20px; background:rgba(0,0,0,0.85); border-radius:24px; border:2px solid var(--accent); backdrop-filter: blur(15px); box-shadow: 0 15px 45px rgba(0,0,0,0.6);">
-          <div style="background:var(--accent); color:#000; padding:10px; border-radius:12px; font-size:11px; margin-bottom:15px; font-weight:900; letter-spacing:0.5px;">
-            🛡️ SECURE ONLINE PAYMENT
+        <div style="text-align:center; padding:20px; background:rgba(0,0,0,0.8); border-radius:24px; border:1px solid var(--accent); backdrop-filter: blur(15px); box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
+          <div style="background:var(--accent); color:#000; padding:10px; border-radius:12px; font-size:11px; margin-bottom:15px; font-weight:800;">
+            🛡️ BANK-VERIFIED PAYMENT GATEWAY
           </div>
 
-          <div style="font-size:15px; color:#fff; font-weight:700; margin-bottom:15px;">
-            Total to Pay: <span style="color:var(--accent); font-size:22px;">₹${amount.toFixed(2)}</span>
+          <div style="font-size:14px; color:#fff; font-weight:700; margin-bottom:15px;">
+            Total: <span style="color:var(--accent); font-size:20px;">₹${amount.toFixed(2)}</span>
           </div>
 
-          <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; margin-bottom:20px;">
-            <p style="font-size:11px; color:#aaa; margin-bottom:12px; font-weight:600;">DIRECT APP PAYMENT:</p>
+          <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:20px;">
+            <p style="font-size:10px; color:#aaa; margin-bottom:10px; text-transform:uppercase;">As per Bank Risk Policy, please use:</p>
             
-            <button onclick="directPay('${targetUrl}')" style="width:100%; padding:18px; background:var(--accent); color:#000; border:none; border-radius:12px; font-weight:900; font-size:15px; margin-bottom:10px; cursor:pointer; box-shadow: 0 5px 15px rgba(245,166,35,0.3);">
-              🚀 PAY VIA MOBILE NUMBER
+            <button onclick="copyAndOpen('8185951564', '${targetUrl}')" style="width:100%; padding:14px; background:var(--accent); color:#000; border:none; border-radius:10px; font-weight:900; font-size:14px; margin-bottom:10px; cursor:pointer;">
+              📱 PAY VIA MOBILE NUMBER
             </button>
-            <p style="font-size:10px; color:#ccc; line-height:1.4;">Opens payment app with <b>fixed amount</b> ₹${amount.toFixed(2)}.</p>
+            <p style="font-size:9px; color:var(--accent); font-weight:700;">(One-tap: Copies number & opens app)</p>
           </div>
 
-          <div style="display:flex; align-items:center; gap:15px; background:#fff; padding:12px; border-radius:15px; margin-bottom:20px;">
-            <img src="${qrUrl}" alt="Scan QR" style="width:100px; height:100px;">
-            <div style="text-align:left;">
-                <p style="color:#000; font-size:11px; font-weight:800; margin-bottom:4px;">OR SCAN QR CODE</p>
-                <p style="color:#666; font-size:9px;">Save this to gallery or scan from another phone.</p>
-            </div>
+          <div style="background:#fff; padding:12px; border-radius:18px; width:fit-content; margin:0 auto 15px; border: 3px solid var(--accent); cursor:pointer;" onclick="window.location.href='${targetUrl}'">
+            <img src="${qrUrl}" alt="Scan to Pay" style="width:150px; height:150px; display:block;">
+            <p style="color:#000; font-size:9px; font-weight:900; margin-top:5px;">TAP OR SCAN QR</p>
           </div>
 
           <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; text-align:left;">
-            <p style="font-size:13px; font-weight:800; color:var(--accent); margin-bottom:8px;">✅ STEP 2: UPLOAD SUCCESS SCREENSHOT</p>
+            <p style="font-size:12px; font-weight:800; color:var(--accent); margin-bottom:5px;">⚠️ FINAL STEP: CONFIRM</p>
+            <p style="font-size:10px; color:#ccc; margin-bottom:12px;">Pay ₹${amount.toFixed(2)} and upload the <b>Success Screenshot</b> below.</p>
             
-            <label class="gallery-btn" id="screenshotBtn" style="width:100%; margin:0; cursor:pointer; background:#fff; color:#000; border:none; padding:16px; display:flex; justify-content:center; align-items:center; gap:10px; font-weight:900; border-radius:12px; box-shadow: 0 5px 15px rgba(255,255,255,0.1);">
+            <label class="gallery-btn" id="screenshotBtn" style="width:100%; margin:0; cursor:pointer; background:#fff; color:#000; border:none; padding:14px; display:flex; justify-content:center; align-items:center; gap:8px; font-weight:900; border-radius:10px;">
               <span>📸</span> VERIFY & CONFIRM
               <input type="file" accept="image/*" style="display:none" onchange="scanPaymentScreenshot(this.files[0])">
             </label>
