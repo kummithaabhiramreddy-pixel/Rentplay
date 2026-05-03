@@ -1490,8 +1490,8 @@
       const amount = parseFloat(document.getElementById('totalPrice').textContent.replace(/[₹,]/g,'').trim());
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
-      const UPI_ID = '7093910280@ybl';
-      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`;
+      const UPI_ID = '8185951564@ybl';
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`;
       
       // Define touch handler for double tap
       window.handleQrTouch = function(e, url) {
@@ -1503,11 +1503,11 @@
         e.target.dataset.lastTouch = now;
       };
 
-      // Synchronized intents with exact Bank Name to pass Risk Policies
+      // Attempting Generic Merchant Bypass (mc=0000)
       const appUrls = {
-        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
-        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
-        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
+        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
+        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
+        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred&mc=0000&mode=02`,
         'upi': upiUrl
       };
 
@@ -1542,7 +1542,7 @@
           <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:15px; margin-bottom:20px;">
             <p style="font-size:10px; color:#aaa; margin-bottom:10px; text-transform:uppercase;">As per Bank Risk Policy, please use:</p>
             
-            <button onclick="copyAndOpen('7093910280', '${targetUrl}')" style="width:100%; padding:14px; background:var(--accent); color:#000; border:none; border-radius:10px; font-weight:900; font-size:14px; margin-bottom:10px; cursor:pointer;">
+            <button onclick="copyAndOpen('8185951564', '${targetUrl}')" style="width:100%; padding:14px; background:var(--accent); color:#000; border:none; border-radius:10px; font-weight:900; font-size:14px; margin-bottom:10px; cursor:pointer;">
               📱 PAY VIA MOBILE NUMBER
             </button>
             <p style="font-size:9px; color:var(--accent); font-weight:700;">(One-tap: Copies number & opens app)</p>
