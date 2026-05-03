@@ -1491,8 +1491,7 @@
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
       const UPI_ID = '7093910280@ybl';
-      const txnId = 'GG' + Date.now() + Math.floor(Math.random() * 1000); // Unique Txn ID
-      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&tr=${txnId}`;
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`;
       
       // Define touch handler for double tap
       window.handleQrTouch = function(e, url) {
@@ -1504,11 +1503,11 @@
         e.target.dataset.lastTouch = now;
       };
 
-      // High-priority direct app intents with Merchant-level parameters to reduce security blocks
+      // Simplified intents for Personal UPI IDs (prevents "Security Reasons" decline)
       const appUrls = {
-        'phonepe': `phonepe://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&mc=5411&tr=${txnId}&mode=02`,
-        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&orgid=159765&tr=${txnId}&mode=02`,
-        'paytm': `paytmmp://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&tr=${txnId}&mode=02`,
+        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
+        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
+        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
         'upi': upiUrl
       };
 
