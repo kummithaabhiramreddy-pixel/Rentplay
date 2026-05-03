@@ -1541,12 +1541,9 @@
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
       const UPI_ID = '7093910280@ybl';
-      const tr = 'GG' + Date.now();
-      const upiParams = `pa=${UPI_ID}&pn=GearGo&am=${amount.toFixed(2)}&cu=INR&tn=Rental+${tr}`;
-      const upiUrl = `upi://pay?${upiParams}`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
 
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       const msg = document.getElementById('bookingMsg');
       
       // Store pending data
@@ -1568,61 +1565,37 @@
       sessionStorage.setItem('pending_booking', JSON.stringify(data));
       isAwaitingPayment = true;
 
-      let appButtonHtml = '';
-      if (isMobile) {
-        let appLink = upiUrl;
-        let appName = method === 'phonepe' ? 'PhonePe' : method === 'gpay' ? 'Google Pay' : 'UPI App';
-        let appColor = method === 'phonepe' ? '#5f259f' : method === 'gpay' ? '#4285f4' : 'var(--accent)';
-        
-        // Advanced Intent for Android bypass
-        if (method === 'phonepe') appLink = `intent://pay?${upiParams}#Intent;scheme=upi;package=com.phonepe.app;end`;
-        else if (method === 'gpay') appLink = `intent://pay?${upiParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
-        else if (method === 'paytm') appLink = `paytmmp://pay?${upiParams}`;
-
-        appButtonHtml = `
-          <a href="${appLink}" style="display:flex; align-items:center; justify-content:center; gap:10px; background:${appColor}; color:#fff; text-decoration:none; padding:15px; border-radius:12px; font-weight:700; margin-bottom:15px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-             <span>🚀 Open ${appName} to Pay</span>
-          </a>
-        `;
-      }
-
       msg.innerHTML = `
-        <div style="text-align:center; padding:18px; background:rgba(0,0,0,0.3); border-radius:16px; border:1px solid var(--border);">
-          <div style="background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#ef4444; padding:8px; border-radius:8px; font-size:10px; margin-bottom:12px; font-weight:700;">
-            ⚠️ MANDATORY: You MUST upload a screenshot after paying to confirm.
+        <div style="text-align:center; padding:18px; background:rgba(0,0,0,0.4); border-radius:18px; border:1px solid var(--border);">
+          <div style="background:rgba(245,166,35,0.1); border:1px solid var(--accent); color:var(--accent); padding:10px; border-radius:10px; font-size:11px; margin-bottom:15px; font-weight:700; line-height:1.4;">
+            🛡️ BANK SECURITY NOTICE:<br>PhonePe blocks "One-Tap" buttons for personal IDs. Please SCAN the QR or COPY the ID below to pay safely.
           </div>
 
-          ${appButtonHtml}
-
-          <div style="background:#fff; padding:8px; border-radius:12px; width:fit-content; margin:0 auto 15px;">
-            <img src="${qrUrl}" alt="Scan QR" style="width:140px; height:140px; display:block;">
+          <div style="background:#fff; padding:10px; border-radius:14px; width:fit-content; margin:0 auto 15px; box-shadow:0 0 20px rgba(245,166,35,0.2);">
+            <img src="${qrUrl}" alt="Scan to Pay" style="width:180px; height:180px; display:block;">
+            <p style="color:#000; font-size:10px; font-weight:800; margin-top:5px; letter-spacing:1px;">SCAN QR TO PAY</p>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#0d0f14; padding:10px; border-radius:10px; margin-bottom:15px;">
-            <div style="text-align:left;">
-              <div style="font-size:9px; color:var(--muted);">Amount to Pay</div>
-              <div style="font-weight:800; color:var(--accent); font-size:1.1rem;">₹${amount.toFixed(2)}</div>
+          <div style="background:#0d0f14; border-radius:12px; padding:12px; margin-bottom:15px; text-align:left; border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-size:10px; color:var(--muted);">Pay to UPI ID</div>
+                <button onclick="copyUPI('${UPI_ID}')" style="background:var(--accent); border:none; color:#000; padding:5px 12px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer;">📋 COPY ID</button>
             </div>
-            <button onclick="copyUPI('${UPI_ID}')" style="background:var(--accent); border:none; color:#000; padding:4px 8px; border-radius:4px; font-size:9px; font-weight:800;">COPY UPI</button>
+            <div style="font-weight:700; color:#fff; font-size:15px; margin-bottom:4px;">${UPI_ID}</div>
+            <div style="font-weight:800; color:var(--accent); font-size:18px; border-top:1px solid #222; padding-top:8px; margin-top:8px;">Amount: ₹${amount.toFixed(2)}</div>
           </div>
 
-          <div style="border-top:1px solid var(--border); padding-top:12px; text-align:left;">
-            <p style="font-size:12px; font-weight:700; color:#fff; margin-bottom:6px;">✅ Final Step: Verify Payment</p>
-            <label class="gallery-btn" style="width:100%; margin:0; cursor:pointer; background:var(--accent); color:#000; border:none; padding:12px; display:flex; justify-content:center; align-items:center; gap:6px; font-size:12px;">
+          <div style="border-top:1px solid var(--border); padding-top:15px; text-align:left;">
+            <p style="font-size:12px; font-weight:700; color:#fff; margin-bottom:8px;">✅ Final Step: Verify Payment</p>
+            <p style="font-size:11px; color:var(--muted); margin-bottom:12px;">Take a screenshot of the "Success" screen and upload it below.</p>
+            
+            <label class="gallery-btn" style="width:100%; margin:0; cursor:pointer; background:var(--accent); color:#000; border:none; padding:15px; display:flex; justify-content:center; align-items:center; gap:8px; font-weight:800;">
               <span>📁</span> UPLOAD SUCCESS SCREENSHOT
               <input type="file" accept="image/*" style="display:none" onchange="scanPaymentScreenshot(this.files[0])">
             </label>
           </div>
         </div>
       `;
-
-      // Auto-trigger on mobile if they click book
-      if (isMobile && method !== 'upi') {
-          setTimeout(() => {
-              // We don't force auto-redirect as it's annoying, 
-              // but the button is prominently displayed.
-          }, 500);
-      }
     }
 
     function copyUPI(id) {
