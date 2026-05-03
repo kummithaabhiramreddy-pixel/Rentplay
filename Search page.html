@@ -1491,7 +1491,7 @@
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
       const UPI_ID = '7093910280@ybl';
-      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`;
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`;
       
       // Define touch handler for double tap
       window.handleQrTouch = function(e, url) {
@@ -1503,11 +1503,11 @@
         e.target.dataset.lastTouch = now;
       };
 
-      // Simplified intents for Personal UPI IDs (prevents "Security Reasons" decline)
+      // Synchronized intents with exact Bank Name to pass Risk Policies
       const appUrls = {
-        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
-        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
-        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=KummithaAbhi`,
+        'phonepe': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
+        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
+        'paytm': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=Kummitha%20Abhi%20Ramred`,
         'upi': upiUrl
       };
 
