@@ -1491,7 +1491,8 @@
       if (isNaN(amount) || amount <= 0) { showToast("⚠️ Set duration first.", "warn"); return; }
       
       const UPI_ID = '7093910280@ybl';
-      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo`;
+      const txnId = 'GG' + Date.now() + Math.floor(Math.random() * 1000); // Unique Txn ID
+      const upiUrl = `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&tr=${txnId}`;
       
       // Define touch handler for double tap
       window.handleQrTouch = function(e, url) {
@@ -1503,11 +1504,11 @@
         e.target.dataset.lastTouch = now;
       };
 
-      // High-priority direct app intents
+      // High-priority direct app intents with Merchant-level parameters to reduce security blocks
       const appUrls = {
-        'phonepe': `phonepe://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&mc=5411&mode=02`,
-        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&orgid=159765&mode=02`,
-        'paytm': `paytmmp://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&mode=02`,
+        'phonepe': `phonepe://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&mc=5411&tr=${txnId}&mode=02`,
+        'gpay': `upi://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&orgid=159765&tr=${txnId}&mode=02`,
+        'paytm': `paytmmp://pay?pa=${UPI_ID}&am=${amount.toFixed(2)}&cu=INR&pn=GearGo&tr=${txnId}&mode=02`,
         'upi': upiUrl
       };
 
